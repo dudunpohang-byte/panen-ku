@@ -1,0 +1,162 @@
+[debug] [2026-06-27T12:56:32.583Z] ----------------------------------------------------------------------
+[debug] [2026-06-27T12:56:32.592Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Muh Arip\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login --no-localhost
+[debug] [2026-06-27T12:56:32.593Z] CLI Version:   15.22.3
+[debug] [2026-06-27T12:56:32.594Z] Platform:      win32
+[debug] [2026-06-27T12:56:32.594Z] Node Version:  v24.16.0
+[debug] [2026-06-27T12:56:32.595Z] Detected Agent: unknown
+[debug] [2026-06-27T12:56:32.595Z] Time:          Sat Jun 27 2026 19:56:32 GMT+0700 (Indochina Time)
+[debug] [2026-06-27T12:56:32.595Z] ----------------------------------------------------------------------
+[debug] 
+[error] 
+[error] Error: Cannot run login in non-interactive mode. See login:ci to generate a token for use in non-interactive environments.
+[debug] [2026-06-27T12:56:48.953Z] ----------------------------------------------------------------------
+[debug] [2026-06-27T12:56:48.961Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Muh Arip\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:list
+[debug] [2026-06-27T12:56:48.962Z] CLI Version:   15.22.3
+[debug] [2026-06-27T12:56:48.962Z] Platform:      win32
+[debug] [2026-06-27T12:56:48.963Z] Node Version:  v24.16.0
+[debug] [2026-06-27T12:56:48.963Z] Detected Agent: unknown
+[debug] [2026-06-27T12:56:48.964Z] Time:          Sat Jun 27 2026 19:56:48 GMT+0700 (Indochina Time)
+[debug] [2026-06-27T12:56:48.964Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-27T12:56:49.721Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-27T12:56:49.723Z] > authorizing via signed-in user (dudunpohang@gmail.com)
+[debug] [2026-06-27T12:56:49.731Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:56:49.731Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:56:49.737Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-06-27T12:56:50.568Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-06-27T12:56:50.569Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] ┌──────────────────────┬───────────────────────┬────────────────┬──────────────────────┐
+│ Project Display Name │ Project ID            │ Project Number │ Resource Location ID │
+├──────────────────────┼───────────────────────┼────────────────┼──────────────────────┤
+│ panenku-app          │ panenku-app (current) │ 829425458846   │ [Not specified]      │
+├──────────────────────┼───────────────────────┼────────────────┼──────────────────────┤
+│ panenku              │ panenku-cab89         │ 877417119930   │ [Not specified]      │
+└──────────────────────┴───────────────────────┴────────────────┴──────────────────────┘
+[info] 
+[info] 2 project(s) total.
+[debug] [2026-06-27T12:58:35.740Z] ----------------------------------------------------------------------
+[debug] [2026-06-27T12:58:35.746Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Muh Arip\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-06-27T12:58:35.746Z] CLI Version:   15.22.3
+[debug] [2026-06-27T12:58:35.747Z] Platform:      win32
+[debug] [2026-06-27T12:58:35.747Z] Node Version:  v24.16.0
+[debug] [2026-06-27T12:58:35.747Z] Detected Agent: unknown
+[debug] [2026-06-27T12:58:35.748Z] Time:          Sat Jun 27 2026 19:58:35 GMT+0700 (Indochina Time)
+[debug] [2026-06-27T12:58:35.748Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-27T12:58:43.806Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-27T12:58:43.809Z] > authorizing via signed-in user (dudunpohang@gmail.com)
+[debug] [2026-06-27T12:58:43.810Z] [iam] checking project panenku-app for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-06-27T12:58:43.813Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:43.814Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:43.818Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/panenku-app:testIamPermissions [none]
+[debug] [2026-06-27T12:58:43.819Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/panenku-app:testIamPermissions  x-goog-user-project=panenku-app
+[debug] [2026-06-27T12:58:43.820Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/panenku-app:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-27T12:58:44.240Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/panenku-app:testIamPermissions 200
+[debug] [2026-06-27T12:58:44.241Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/panenku-app:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-27T12:58:44.244Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:44.245Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:44.246Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/panenku-app [none]
+[debug] [2026-06-27T12:58:44.886Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/panenku-app 200
+[debug] [2026-06-27T12:58:44.886Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/panenku-app {"projectId":"panenku-app","projectNumber":"829425458846","displayName":"panenku-app","name":"projects/panenku-app","resources":{"hostingSite":"panenku-app"},"state":"ACTIVE","etag":"1_e5bd35de-32e9-4f84-9689-45669b40328e"}
+[info] 
+[info] === Deploying to 'panenku-app'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-06-27T12:58:44.897Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:44.897Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:44.898Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/panenku-app/sites/panenku-app [none]
+[debug] [2026-06-27T12:58:45.906Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/panenku-app/sites/panenku-app 200
+[debug] [2026-06-27T12:58:45.908Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/panenku-app/sites/panenku-app {"name":"projects/panenku-app/sites/panenku-app","defaultUrl":"https://panenku-app.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-06-27T12:58:45.919Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:45.919Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:45.920Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions [none]
+[debug] [2026-06-27T12:58:45.920Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-06-27T12:58:46.889Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions 200
+[debug] [2026-06-27T12:58:46.889Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions {"name":"projects/829425458846/sites/panenku-app/versions/2032d44708efd024","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[panenku-app]: beginning deploy... 
+[info] i  hosting[panenku-app]: found 19 files in dist/client 
+[debug] [2026-06-27T12:58:46.932Z] [hosting] uploading with 200 concurrency
+[debug] [2026-06-27T12:58:47.099Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:47.103Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:47.105Z] [hosting] hash cache [ZGlzdFxjbGllbnQ] stored for 19 files
+[debug] [2026-06-27T12:58:47.106Z] [hosting][hash queue][FINAL] {"max":116,"min":10,"avg":56,"active":0,"complete":19,"success":19,"errored":0,"retried":0,"total":19,"elapsed":134}
+[debug] [2026-06-27T12:58:47.107Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/829425458846/sites/panenku-app/versions/2032d44708efd024:populateFiles [none]
+[debug] [2026-06-27T12:58:47.107Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/829425458846/sites/panenku-app/versions/2032d44708efd024:populateFiles {"files":{"/sw.js":"2bdc1f7debb46f808bbf43d1392b3a181b8e7698f3bb723541809ff7c9ed6447","/manifest.json":"65fc4f2d7ad75e7bcfdc925c04627cf47da52671f4973bd4f65673b02764b551","/index.html":"8e85fd2ef1ba5610dc2933c5aaadf38c9ede367d0c519e1fc13b57d0a0f31414","/favicon.ico":"85a87f741c13d7906fbef06789c4fcb66f96de22a7c5b7f88eb97ad2e5ff63e6","/assets/styles-BYM_5YR3.css":"cfef9daea4c99c3672f71d01461d2748bb31e544aa9297c4569560907f9d67cf","/assets/produk-pisang-8gV5iYGS.jpg":"c0623a358adc7c5ad6767333d00ada5bba2c9eabc6a1e70d447e656b00e744c7","/assets/produk-jeruk-gw04sFkc.jpg":"118e6bc6dcace213345603edc130ca8440d1af040ad1930c220007061ae59df7","/assets/banner-ongkir-Dou9eWl0.jpg":"a0f17b6d52236f9e87ed4b806e8cb4b6f78e7ff405ac21da176dd5dcd52564a5","/assets/banner-panen-CFoCK2n0.jpg":"b7e3ab59d2b261f1e671975e46a759cd3720e5924e78b91976ee54adc22b4a30","/assets/produk-tomat-D_n-dixj.jpg":"82dec766f397af51a7a5bc6f109982f0d9edb9353c8bb4e9ddc9670c18e48c04","/assets/produk-bayam-w1__cLP0.jpg":"644fd66655e1e37a95347c880ad1cbc6a5a85e0a852f6c5e1e601f8dafe4ad6e","/assets/produk-wortel-C3TFtXTU.jpg":"0a4ac5f4c039da9cabb88f97a63c86098d792c0506dc8104f35a7772286aaa89","/assets/produk-beras-DPKZ0Got.jpg":"3fadd569308306cc01469bd62bf4df09f26bbde9aea7cec96d759bb2b4363685","/assets/produk-kentang-CUlpb_2d.jpg":"f0d86f2305f8c5ccaf4fcea084edc5d8cb40370d68682ce0f0ed8843661ce046","/assets/produk-cabai-DP-xEbA6.jpg":"73d8462b1e315095e9d7fdc57d61771e76e920cf29ebd9ada5d4de59979d6149","/assets/produk-jahe-DOvZ2kQB.jpg":"81acf1f6e4bb1eb8dbb0f693a463a29d010cb12a045ceb9eee14edc8ae85e6f6","/assets/produk-bawang-C_lsTSt_.jpg":"e10db2399c47cf673382e8428066a06f6c1321e210e9a45dd594064ec1dc6421","/assets/logo-panenku-pVr7PMwh.png":"1c92e49a3417421f83e789f052028ce1c7693e3c4fcdca4c58cc92460d4cb735","/assets/index-DdWaeDrv.js":"7a3a3b377b27e6ebaa251306cae2dc4906adda49dca7987e60c58838f7152b2e"}}
+[debug] [2026-06-27T12:58:47.860Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/829425458846/sites/panenku-app/versions/2032d44708efd024:populateFiles 200
+[debug] [2026-06-27T12:58:47.861Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/829425458846/sites/panenku-app/versions/2032d44708efd024:populateFiles {"uploadRequiredHashes":["7a3a3b377b27e6ebaa251306cae2dc4906adda49dca7987e60c58838f7152b2e"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/panenku-app/versions/2032d44708efd024/files"}
+[debug] [2026-06-27T12:58:47.862Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:47.862Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:47.863Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/panenku-app/versions/2032d44708efd024/files/7a3a3b377b27e6ebaa251306cae2dc4906adda49dca7987e60c58838f7152b2e [none]
+[debug] [2026-06-27T12:58:47.863Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/panenku-app/versions/2032d44708efd024/files/7a3a3b377b27e6ebaa251306cae2dc4906adda49dca7987e60c58838f7152b2e [stream]
+[debug] [2026-06-27T12:58:47.867Z] [hosting][populate queue][FINAL] {"max":763,"min":763,"avg":763,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":769}
+[debug] [2026-06-27T12:58:47.869Z] [hosting] uploads queued: 1
+[info] i  hosting: uploading new files [0/1] (0%) 
+[debug] [2026-06-27T12:58:49.832Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/panenku-app/versions/2032d44708efd024/files/7a3a3b377b27e6ebaa251306cae2dc4906adda49dca7987e60c58838f7152b2e 200
+[debug] [2026-06-27T12:58:49.833Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/panenku-app/versions/2032d44708efd024/files/7a3a3b377b27e6ebaa251306cae2dc4906adda49dca7987e60c58838f7152b2e [stream]
+[debug] [2026-06-27T12:58:49.835Z] [hosting][upload queue][FINAL] {"max":1974,"min":1974,"avg":1974,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":1974}
+[info] i  hosting: upload complete 
+[info] +  hosting[panenku-app]: file upload complete 
+[debug] [2026-06-27T12:58:49.837Z] [hosting] deploy completed after 2942ms
+[debug] [2026-06-27T12:58:49.837Z] [
+  {
+    "config": {
+      "public": "dist/client",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        },
+        {
+          "source": "**/*.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache"
+            }
+          ]
+        }
+      ],
+      "site": "panenku-app"
+    },
+    "version": "projects/829425458846/sites/panenku-app/versions/2032d44708efd024"
+  }
+]
+[info] i  hosting[panenku-app]: finalizing version... 
+[debug] [2026-06-27T12:58:49.842Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:49.843Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:49.843Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions/2032d44708efd024 updateMask=status%2Cconfig
+[debug] [2026-06-27T12:58:49.844Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions/2032d44708efd024 {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"headers":[{"glob":"**/*.@(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)","headers":{"Cache-Control":"public, max-age=31536000, immutable"}},{"glob":"**/*.html","headers":{"Cache-Control":"no-cache"}}]}}
+[debug] [2026-06-27T12:58:50.828Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions/2032d44708efd024 200
+[debug] [2026-06-27T12:58:50.828Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/versions/2032d44708efd024 {"name":"projects/829425458846/sites/panenku-app/versions/2032d44708efd024","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"public, max-age=31536000, immutable"},"glob":"**/*.@(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)"},{"headers":{"Cache-Control":"no-cache"},"glob":"**/*.html"}],"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-06-27T12:58:46.305420Z","createUser":{"email":"dudunpohang@gmail.com"},"finalizeTime":"2026-06-27T12:58:50.746807Z","finalizeUser":{"email":"dudunpohang@gmail.com"}}
+[debug] [2026-06-27T12:58:50.828Z] [hosting] finalized version for panenku-app:[object Object]
+[info] +  hosting[panenku-app]: version finalized 
+[info] i  hosting[panenku-app]: releasing new version... 
+[debug] [2026-06-27T12:58:50.830Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:50.830Z] Checked if tokens are valid: true, expires at: 1782567324235
+[debug] [2026-06-27T12:58:50.830Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/channels/live/releases versionName=projects%2F829425458846%2Fsites%2Fpanenku-app%2Fversions%2F2032d44708efd024
+[debug] [2026-06-27T12:58:50.831Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/channels/live/releases {}
+[debug] [2026-06-27T12:58:51.596Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/channels/live/releases 200
+[debug] [2026-06-27T12:58:51.596Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/panenku-app/channels/live/releases {"name":"projects/829425458846/sites/panenku-app/channels/live/releases/1782565130816000","version":{"name":"projects/829425458846/sites/panenku-app/versions/2032d44708efd024","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"public, max-age=31536000, immutable"},"glob":"**/*.@(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)"},{"headers":{"Cache-Control":"no-cache"},"glob":"**/*.html"}],"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-06-27T12:58:46.305420Z","createUser":{"email":"dudunpohang@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSOuViLnStumOAdeXRtOZj6ePplQWGNU0iTAaiePYLMmZ8SJZ5"},"finalizeTime":"2026-06-27T12:58:50.746807Z","finalizeUser":{"email":"dudunpohang@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSOuViLnStumOAdeXRtOZj6ePplQWGNU0iTAaiePYLMmZ8SJZ5"}},"type":"DEPLOY","releaseTime":"2026-06-27T12:58:50.816Z","releaseUser":{"email":"dudunpohang@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSOuViLnStumOAdeXRtOZj6ePplQWGNU0iTAaiePYLMmZ8SJZ5"}}
+[debug] [2026-06-27T12:58:51.596Z] [hosting] release: {"name":"projects/829425458846/sites/panenku-app/channels/live/releases/1782565130816000","version":{"name":"projects/829425458846/sites/panenku-app/versions/2032d44708efd024","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"public, max-age=31536000, immutable"},"glob":"**/*.@(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)"},{"headers":{"Cache-Control":"no-cache"},"glob":"**/*.html"}],"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-06-27T12:58:46.305420Z","createUser":{"email":"dudunpohang@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSOuViLnStumOAdeXRtOZj6ePplQWGNU0iTAaiePYLMmZ8SJZ5"},"finalizeTime":"2026-06-27T12:58:50.746807Z","finalizeUser":{"email":"dudunpohang@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSOuViLnStumOAdeXRtOZj6ePplQWGNU0iTAaiePYLMmZ8SJZ5"}},"type":"DEPLOY","releaseTime":"2026-06-27T12:58:50.816Z","releaseUser":{"email":"dudunpohang@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocJSOuViLnStumOAdeXRtOZj6ePplQWGNU0iTAaiePYLMmZ8SJZ5"}}
+[info] +  hosting[panenku-app]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/panenku-app/overview
+[info] Hosting URL: https://panenku-app.web.app
