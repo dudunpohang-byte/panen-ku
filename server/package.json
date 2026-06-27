@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "debug": "ts-node-dev --inspect=9229 --respawn --transpile-only src/index.ts",
+    "dev": "tsx src/index.ts",
+    "debug": "tsx --inspect=9229 src/index.ts",
     "db:setup": "node scripts/setup-db.mjs",
     "db:seed": "node scripts/setup-db.mjs",
     "build": "tsc -p .",

@@ -14,361 +14,473 @@ export type EduTopic = {
   id: string;
   title: string;
   emoji: string;
-  color: string; // gradient color class
+  color: string;
   difficulty: "pemula" | "menengah" | "mahir";
-  readTime: string; // e.g. "5 menit"
+  readTime: string;
   summary: string;
   highlights: string[];
+  /** Tahapan menanam dari awal sampai panen */
   steps: EduStep[];
   tips: EduTip[];
   links: EduLink[];
 };
 
 export const edukasiTopics: EduTopic[] = [
+  // ===== CABAI =====
   {
-    id: "cara-menanam",
-    title: "Cara Menanam",
-    emoji: "🌱",
-    color: "from-emerald-500 to-green-600",
-    difficulty: "pemula",
-    readTime: "5 menit",
+    id: "menanam-cabai",
+    title: "Panduan Lengkap Menanam Cabai",
+    emoji: "🌶️",
+    color: "from-red-500 to-rose-600",
+    difficulty: "menengah",
+    readTime: "10 menit",
     summary:
-      "Panduan langkah demi langkah menanam sayuran dan tanaman pangan dari awal hingga siap panen. Cocok untuk petani pemula!",
+      "Panduan menanam cabai merah keriting & rawit dari semai hingga panen. Cocok untuk lahan 1 hektar dengan hasil optimal 10-15 ton.",
     highlights: [
-      "✅ Pilih bibit unggul bersertifikat",
-      "🌞 Pastikan sinar matahari cukup (4-6 jam/hari)",
-      "💧 Siram secara teratur tapi jangan berlebihan",
+      "🌱 Semai benih 21-28 hari sebelum pindah tanam",
+      "🌞 Butuh sinar matahari penuh 6-8 jam/hari",
+      "💧 Irigasi tetes 2-3 hari sekali, hindari genangan",
+      "🧪 pH tanah ideal 5.5-6.5",
     ],
     steps: [
       {
-        title: "Pilih Bibit Berkualitas",
+        title: "Persiapan Benih & Persemaian",
         description:
-          "Gunakan bibit bersertifikat dari penjual terpercaya. Rendam bibit dalam air hangat selama 15 menit sebelum tanam untuk mempercepat perkecambahan.",
+          "Rendam benih dalam air hangat (50°C) selama 15 menit. Semai di tray 72 lubang dengan media campuran arang sekam + kompos (1:1). Letakkan di tempat teduh. Semprot air 2x sehari. Benih mulai berkecambah hari ke-7 hingga 14.",
       },
       {
-        title: "Siapkan Media Tanam",
+        title: "Persiapan Lahan",
         description:
-          "Campur tanah, kompos, dan sekam bakar dengan perbandingan 2:1:1. Masukkan ke dalam polybag atau bedengan setinggi 20-30 cm.",
+          "Olah tanah sedalam 30-40 cm, taburi dolomit 1-2 ton/ha untuk menaikkan pH. Buat bedengan lebar 100 cm, tinggi 30 cm, jarak antar bedengan 50 cm. Aplikasikan pupuk kandang 10-15 ton/ha, campur rata 7 hari sebelum tanam. Pasang mulsa plastik hitam perak.",
+      },
+      {
+        title: "Pindah Tanam (21-28 HSS)",
+        description:
+          "Bibit siap pindah jika sudah memiliki 4-5 daun sejati (usia 21-28 hari). Pindahkan ke bedengan dengan jarak tanam 60x60 cm (populasi ~20.000 tanaman/ha). Tanam sore hari. Segera siram air secukupnya dan pasang ajir/bamboo penyangga.",
+      },
+      {
+        title: "Pemupukan & Perawatan",
+        description:
+          "Umur 7 HST: NPK 16-16-16 dosis 5 gram/tanaman. Umur 30 HST: NPK 12-12-17-2 dosis 10 gram + KNO3 3 gram. Umur 45 & 60 HST: ulangi. Bersihkan gulma rutin. Pangkas daun bawah (40 cm dari tanah) setelah tanaman tinggi 50 cm.",
+      },
+      {
+        title: "Pengendalian Hama & Penyakit",
+        description:
+          "Hama utama: kutu daun (semprot insektisida nabati), thrips (perangkap kuning), ulat buah (Bacillus thuringiensis). Penyakit: layu fusarium (cabut & bakar tanaman), antraknosa (semprot fungisida berbahan aktif mankozeb). Lakukan rotasi tanaman setiap musim.",
+      },
+      {
+        title: "Panen & Pascapanen",
+        description:
+          "Panen pertama umur 75-90 HST. Ciri siap panen: buah berwarna merah 70-80%, tekstur keras. Panen setiap 3-5 hari sekali selama 3-4 bulan. Simpan di suhu 8-10°C, tahan 10-14 hari. Potensi hasil: 10-15 ton/ha untuk cabai merah, 8-10 ton untuk rawit.",
+      },
+    ],
+    tips: [
+      { icon: "🌱", text: "Gunakan benih bersertifikat varietas hibrida seperti PM999 atau Kencana" },
+      { icon: "💧", text: "Pasang irigasi tetes untuk efisiensi air hingga 60%" },
+      { icon: "🛡️", text: "Tanam refugia (bunga kenikir) di pinggir bedengan sebagai habitat musuh alami" },
+      { icon: "📅", text: "Catat jadwal panen untuk antisipasi permintaan pasar" },
+    ],
+    links: [
+      { label: "🎬 Cara Semai Cabai yang Benar", url: "https://www.youtube.com/results?search_query=cara+semai+cabai+yang+benar" },
+      { label: "🌿 Pupuk & Perawatan Cabai", url: "https://www.youtube.com/results?search_query=pupuk+tanaman+cabai+agar+berbuah+lebat" },
+      { label: "💊 Atasi Hama & Penyakit Cabai", url: "https://www.youtube.com/results?search_query=hama+penyakit+tanaman+cabai+dan+cara+mengatasinya" },
+    ],
+  },
+
+  // ===== WORTEL =====
+  {
+    id: "menanam-wortel",
+    title: "Panduan Menanam Wortel",
+    emoji: "🥕",
+    color: "from-orange-500 to-amber-600",
+    difficulty: "menengah",
+    readTime: "8 menit",
+    summary:
+      "Cara budidaya wortel di dataran tinggi (800-1200 mdpl) hasil maksimal 20-30 ton/ha. Cocok untuk lahan terbuka dengan tanah gembur.",
+    highlights: [
+      "🏔️ Tanam di dataran tinggi 800-1200 mdpl",
+      "🪨 Butuh tanah gembur, dalam, dan bebas batu",
+      "🌱 Semai langsung di bedengan, tidak perlu pindah tanam",
+      "⏳ Panen umur 90-120 hari tergantung varietas",
+    ],
+    steps: [
+      {
+        title: "Persiapan Lahan",
+        description:
+          "Olah tanah sedalam 40-50 cm karena wortel membutuhkan tanah dalam untuk pertumbuhan umbi maksimal. Gemburkan tanah dengan cangkul atau traktor. Buat bedengan lebar 100 cm, tinggi 30 cm. Aplikasikan pupuk kandang 15-20 ton/ha + NPK 16-16-16 200 kg/ha sebagai pupuk dasar. Pastikan pH tanah 5.8-6.8. Taburi dolomit 1 ton/ha 2 minggu sebelum tanam jika pH terlalu asam.",
+      },
+      {
+        title: "Penanaman Benih",
+        description:
+          "Tanam benih langsung di bedengan (tidak perlu semai). Buat alur sedalam 1 cm dengan jarak antar baris 20 cm. Campur benih dengan pasir halus (1:10) agar sebar merata. Tabur tipis di alur, tutup dengan tanah halus setebal 0.5 cm. Siram dengan spray halus agar benih tidak hanyut.",
+      },
+      {
+        title: "Penjarangan & Perawatan",
+        description:
+          "Setelah bibit berumur 2-3 minggu (3-4 daun), lakukan penjarangan dengan menyisakan jarak 5-10 cm antar tanaman. Bersihkan gulma setiap 2 minggu. Beri pupuk susulan NPK 16-16-16 150 kg/ha pada umur 30 dan 60 HST. Siram 2x sehari jika tidak hujan.",
+      },
+      {
+        title: "Pengendalian OPT",
+        description:
+          "Hama utama: ulat tanah (semprot insektisida nabati daun mimba), nematoda (rotasi tanaman, gunakan pupuk hijau). Penyakit: bercak daun cercospora (semprot fungisida mankozeb), busuk umbi (perbaiki drainase). Hindari tanah becek yang menyebabkan cacat umbi.",
+      },
+      {
+        title: "Panen & Penyimpanan",
+        description:
+          "Wortel siap panen umur 90-120 hari. Ciri: daun mulai menguning, pangkal umbi berdiameter 3-5 cm. Panen pagi atau sore hari dengan cara dicabut perlahan. Potong daun menyisakan 2-3 cm. Sortir ukuran, cuci bersih, simpan di suhu 0-2°C dengan kelembaban 95% (tahan 4-6 bulan).",
+      },
+    ],
+    tips: [
+      { icon: "🪨", text: "Pastikan tanah bebas dari batu kerikil agar umbi tidak bercabang" },
+      { icon: "🌾", text: "Taburkan mulsa jerami untuk menjaga kelembaban dan menekan gulma" },
+      { icon: "⏰", text: "Jangan terlambat panen! Wortel yang terlalu tua akan berserat dan keras" },
+      { icon: "🔄", text: "Rotasi tanaman dengan kacang-kacangan untuk memulihkan nitrogen" },
+    ],
+    links: [
+      { label: "🎬 Cara Menanam Wortel dari Awal", url: "https://www.youtube.com/results?search_query=cara+menanam+wortel+dari+awal" },
+      { label: "🌿 Pupuk Agar Wortel Besar", url: "https://www.youtube.com/results?search_query=pupuk+wortel+agar+besar" },
+    ],
+  },
+
+  // ===== STROBERI =====
+  {
+    id: "menanam-stroberi",
+    title: "Budidaya Stroberi Dataran Tinggi",
+    emoji: "🍓",
+    color: "from-red-400 to-pink-500",
+    difficulty: "mahir",
+    readTime: "12 menit",
+    summary:
+      "Panduan lengkap menanam stroberi premium di dataran tinggi (1000-1500 mdpl) menggunakan sistem mulsa plastik hasil 30-40 ton/ha/tahun.",
+    highlights: [
+      "🏔️ Optimal di ketinggian 1000-1500 mdpl",
+      "🌱 Perbanyak dengan stolon (anakan), bukan biji",
+      "🍓 Panen 3-4 bulan setelah tanam, terus hingga 2 tahun",
+      "🧪 Pemupukan setiap 7-10 hari dengan pupuk cair",
+    ],
+    steps: [
+      {
+        title: "Pembibitan Stroberi",
+        description:
+          "Stroberi diperbanyak secara vegetatif menggunakan stolon (sulur). Pilih stolon dari indukan sehat usia 4-8 bulan. Potong stolon yang sudah berakar (3-4 daun) lalu pindahkan ke polybag 10x15 cm. Media bibit: campuran cocopeat + kompos + arang sekam (2:1:1). Siram 2x sehari, beri naungan 50%.",
+      },
+      {
+        title: "Persiapan Lahan & Bedengan",
+        description:
+          "Olah tanah sedalam 30 cm, taburi dolomit 1.5 ton/ha. Buat bedengan lebar 80 cm, tinggi 40 cm, jarak antar bedengan 60 cm. Aplikasi pupuk kandang 20 ton/ha + NPK 15-15-15 300 kg/ha + KNO3 100 kg/ha. Pasang mulsa plastik hitam perak. Buat lubang tanam jarak 30x30 cm (zigzag).",
       },
       {
         title: "Penanaman",
         description:
-          "Buat lubang sedalam 1-2 cm, masukkan 2-3 bibit per lubang, lalu tutup tipis dengan tanah. Beri jarak 20-30 cm antar lubang.",
+          "Pindahkan bibit stoberi ke lubang tanam pada sore hari. Jangan tanam terlalu dalam (akar tertimbun) atau terlalu dangkal (akar kering). Kedalaman ideal: mahkota batang tepat di permukaan tanah. Siram segera. Pasang ajir atau bambu untuk mencegah buah menyentuh tanah. Populasi: ~50.000 tanaman/ha.",
       },
       {
-        title: "Perawatan Awal",
+        title: "Pemupukan & Irigasi",
         description:
-          "Siram 2 kali sehari (pagi dan sore). Lindungi bibit dari sinar matahari langsung selama 3-5 hari pertama menggunakan naungan.",
+          "Pemupukan setiap 7-10 hari melalui irigasi (fertigasi) atau kocor. Dosis per tanaman: 2 gram NPK 15-15-15 + 1 gram KNO3 + 0.5 gram MgSO4. Setelah mulai berbunga tambahkan 2 gram NPK 12-12-17-2. Irigasi tetes 15-30 menit/hari tergantung cuaca. Jaga kelembaban tanah 70-80%.",
       },
       {
-        title: "Pemupukan Lanjutan",
+        title: "Perawatan & Pemangkasan",
         description:
-          "Berikan pupuk organik cair setiap 7 hari sekali. Aplikasikan pada pagi hari dengan dosis sesuai petunjuk kemasan.",
+          "Pangkas daun tua/kuning setiap minggu untuk sirkulasi udara. Buang stolon yang tidak diperlukan agar nutrisi fokus ke buah. Lakukan penjarangan bunga jika terlalu banyak. Beri naungan paranet 30-50% untuk melindungi dari hujan deras dan sinar berlebih. Pasang perangkap kuning untuk hama.",
+      },
+      {
+        title: "Panen & Pemasaran",
+        description:
+          "Panen dimulai umur 3-4 bulan setelah tanam. Ciri siap panen: buah merah 80-100%, buah keras. Panen setiap 2-3 hari sekali, lakukan pagi hari. Petik dengan tangkai. Sortir grade A (besar >15g), B (10-15g), C (kecil/reject). Simpan di suhu 0-2°C, tahan 5-7 hari. Potensi hasil 30-40 ton/ha/tahun.",
       },
     ],
     tips: [
-      { icon: "💡", text: "Tanam di awal musim hujan untuk mengurangi biaya penyiraman" },
-      { icon: "📌", text: "Buat jadwal tanam agar panen bisa berkesinambungan" },
-      { icon: "⭐", text: "Catat setiap perkembangan tanaman untuk evaluasi" },
+      { icon: "🍓", text: "Gunakan varietas unggul seperti Earlibrite, Florida, atau Sweet Charlie" },
+      { icon: "🧪", text: "pH tanah ideal 5.5-6.5 — lakukan tes tanah setiap 3 bulan" },
+      { icon: "💧", text: "Hindari penyiraman di daun untuk cegah penyakit jamur" },
+      { icon: "♻️", text: "Ganti bibit setiap 2 tahun untuk menjaga produktivitas" },
     ],
     links: [
-      {
-        label: "🎬 Video: Cara Menanam Sayur di Rumah",
-        url: "https://www.youtube.com/results?search_query=cara+menanam+sayur+di+rumah",
-      },
-      {
-        label: "📖 Artikel: Panduan Pemula Menanam Tomat",
-        url: "https://www.youtube.com/results?search_query=menanam+tomat+panduan+pemula",
-      },
-      {
-        label: "📱 Kalkulator Kebutuhan Bibit",
-        url: "https://www.youtube.com/results?search_query=kalkulator+jarak+tanam",
-      },
+      { label: "🎬 Cara Menanam Stroberi di Polybag", url: "https://www.youtube.com/results?search_query=cara+menanam+stroberi+di+polybag" },
+      { label: "🌿 Pupuk Stroberi Agar Berbuah Besar", url: "https://www.youtube.com/results?search_query=pupuk+stroberi+agar+manis+dan+besar" },
+      { label: "🛡️ Hama & Penyakit Stroberi", url: "https://www.youtube.com/results?search_query=hama+penyakit+tanaman+stroberi" },
     ],
   },
+
+  // ===== SURAUNG / PARE =====
   {
-    id: "memilih-pupuk",
-    title: "Memilih & Menggunakan Pupuk",
-    emoji: "🌿",
-    color: "from-teal-500 to-cyan-600",
+    id: "menanam-suraung",
+    title: "Budidaya Suraung (Pare)",
+    emoji: "🥒",
+    color: "from-green-600 to-emerald-700",
     difficulty: "pemula",
-    readTime: "7 menit",
-    summary:
-      "Kenali jenis pupuk organik dan anorganik, dosis tepat, serta waktu aplikasi yang optimal untuk setiap jenis tanaman Anda.",
-    highlights: [
-      "🧪 Kenali dulu jenis tanah sebelum pilih pupuk",
-      "🌿 Pupuk organik lebih ramah lingkungan",
-      "📅 Jadwal pemupukan yang tepat meningkatkan hasil 2x lipat",
-    ],
-    steps: [
-      {
-        title: "Tes Jenis Tanah",
-        description:
-          "Gunakan alat tes tanah sederhana (pH meter) untuk mengukur keasaman. pH ideal untuk sayuran adalah 5.5–7.0.",
-      },
-      {
-        title: "Pilih Jenis Pupuk",
-        description:
-          "Pupuk organik (kompos/pupuk kandang) untuk perbaikan struktur tanah. Pupuk anorganik (NPK) untuk tambahan nutrisi cepat.",
-      },
-      {
-        title: "Hitung Dosis",
-        description:
-          "Dosis umum: 5-10 ton/ha pupuk kandang untuk dasar, 200-400 kg/ha NPK untuk pemeliharaan. Sesuaikan dengan jenis tanaman.",
-      },
-      {
-        title: "Aplikasi Pupuk Dasar",
-        description:
-          "Taburkan pupuk kandang 1-2 minggu sebelum tanam. Campur rata dengan tanah bedengan sedalam 10-15 cm.",
-      },
-      {
-        title: "Aplikasi Pupuk Susulan",
-        description:
-          "Berikan NPK pada usia 15, 30, dan 45 hari setelah tanam. Aplikasikan melingkar 5 cm dari batang tanaman.",
-      },
-    ],
-    tips: [
-      { icon: "♻️", text: "Buat kompos sendiri dari sisa panen dan limbah dapur" },
-      { icon: "⚠️", text: "Jangan berlebihan! Over-fertilizer bisa membakar akar" },
-      { icon: "📊", text: "Catat dosis dan hasil untuk referensi musim berikutnya" },
-    ],
-    links: [
-      {
-        label: "🎬 Video: Pupuk Organik vs Anorganik",
-        url: "https://www.youtube.com/results?search_query=pupuk+organik+vs+anorganik",
-      },
-      {
-        label: "📖 Cara Pemberian Pupuk yang Benar",
-        url: "https://www.youtube.com/results?search_query=cara+pemberian+pupuk+yang+benar",
-      },
-    ],
-  },
-  {
-    id: "memilih-tanah",
-    title: "Tanah & Media Tanam",
-    emoji: "🏔️",
-    color: "from-amber-600 to-orange-600",
-    difficulty: "pemula",
-    readTime: "6 menit",
-    summary:
-      "Karakteristik tanah subur, cara menguji kesuburan sederhana, serta campuran media tanam optimal untuk polybag dan bedengan.",
-    highlights: [
-      "👆 Tanah subur terasa gembur dan berwarna gelap",
-      "🪱 Cacing tanah = indikator tanah sehat",
-      "🧪 pH tanah ideal untuk sayuran: 5.5–7.0",
-    ],
-    steps: [
-      {
-        title: "Ciri Tanah Subur",
-        description:
-          "Tanah gembur, mudah diolah, berwarna cokelat kehitaman, banyak mengandung mikroorganisme seperti cacing tanah.",
-      },
-      {
-        title: "Uji Kesuburan Sederhana",
-        description:
-          "Ambil segenggam tanah, basahi, lalu kepal. Jika tanah menggumpal padat berarti liat. Jika mudah hancur berarti ideal.",
-      },
-      {
-        title: "Campuran Media Tanam Polybag",
-        description:
-          "Campur tanah : kompos : sekam bakar dengan perbandingan 2:1:1. Tambahkan 1 genggam dolomit per polybag ukuran 40x50 cm.",
-      },
-      {
-        title: "Pengolahan Bedengan",
-        description:
-          "Cangkul tanah sedalam 30-40 cm, bentuk bedengan lebar 100-120 cm, tinggi 30 cm, dan beri jarak antar bedengan 40 cm.",
-      },
-      {
-        title: "Mulsa dan Penutup",
-        description:
-          "Gunakan mulsa plastik hitam perak untuk menekan gulma dan menjaga kelembaban. Potong lubang sesuai jarak tanam.",
-      },
-    ],
-    tips: [
-      { icon: "🔄", text: "Rotasi tanaman mencegah kehabisan nutrisi tanah" },
-      { icon: "🌾", text: "Tanam kacang-kacangan untuk fiksasi nitrogen alami" },
-      { icon: "🧪", text: "Uji tanah setiap 6 bulan untuk pantau kesuburan" },
-    ],
-    links: [
-      {
-        label: "🎬 Video: Ciri-ciri Tanah Subur",
-        url: "https://www.youtube.com/results?search_query=ciri+ciri+tanah+subur",
-      },
-      {
-        label: "📖 Cara Membuat Media Tanam Sendiri",
-        url: "https://www.youtube.com/results?search_query=membuat+media+tanam+sendiri",
-      },
-    ],
-  },
-  {
-    id: "perawatan",
-    title: "Perawatan & Irigasi",
-    emoji: "💧",
-    color: "from-sky-500 to-blue-600",
-    difficulty: "menengah",
     readTime: "8 menit",
     summary:
-      "Teknik penyiraman efektif, pemangkasan yang benar, dan pemeliharaan rutin untuk mencegah penyakit serta meningkatkan hasil panen.",
+      "Panduan menanam pare/suraung menggunakan lanjaran (rambatan) hasil 15-20 ton/ha. Tanaman ini mudah tumbuh di dataran rendah hingga sedang.",
     highlights: [
-      "⏰ Siram pagi hari sebelum pukul 9 untuk hasil optimal",
-      "✂️ Pangkas daun tua/bawah untuk sirkulasi udara",
-      "💦 Irigasi tetes hemat air hingga 70%",
+      "🌿 Tanaman rambat, butuh lanjaran/para-para",
+      "☀️ Tumbuh baik di dataran rendah 0-500 mdpl",
+      "🌸 Bunga jantan & betina terpisah (dibantu penyerbukan)",
+      "⏳ Panen umur 60-75 hari setelah tanam",
     ],
     steps: [
       {
-        title: "Jadwal Penyiraman",
+        title: "Persiapan Benih",
         description:
-          "Siram 2 kali sehari (pagi jam 6-8 dan sore jam 15-17). Sesuaikan frekuensi dengan cuaca - kurangi saat hujan, tambah saat kemarau.",
+          "Rendam benih pare dalam air hangat (40°C) selama 6-12 jam untuk memecah dormansi. Keringkan angin-angin. Semai dalam polybag kecil (5x10 cm) berisi media tanah + kompos (1:1). Letakkan di tempat teduh. Benih berkecambah dalam 3-7 hari. Bibit siap pindah umur 14-21 hari dengan 2-3 daun.",
       },
       {
-        title: "Teknik Penyiraman",
+        title: "Persiapan Lahan & Lanjaran",
         description:
-          "Siram di area akar, bukan di daun. Gunakan gembor atau selang dengan nozzle spray halus agar tanah tidak memadat.",
+          "Olah tanah sedalam 30 cm. Buat bedengan lebar 100 cm, tinggi 30 cm. Aplikasi pupuk kandang 10 ton/ha + NPK 16-16-16 200 kg/ha. Buat lanjaran/para-para setinggi 200 cm dari bambu. Jarak tanam 100x100 cm (populasi ~10.000 tanaman/ha). Pasang ajir di setiap lubang tanam.",
       },
       {
-        title: "Pemasangan Irigasi Tetes",
+        title: "Penanaman & Pelatihan Rambat",
         description:
-          "Pasang selang irigasi tetes di atas bedengan. Lubangi selang setiap 20-30 cm (sesuai jarak tanam). Alirkan air selama 15-30 menit/hari.",
+          "Pindahkan bibit ke lubang tanam. Segera arahkan batang tanaman ke lanjaran dengan tali rafia. Tanaman akan merambat sendiri setelah terarah. Pangkas cabang lateral hingga ketinggian 50 cm untuk merangsang pertumbuhan utama. Siram 2x sehari.",
       },
       {
-        title: "Pemangkasan Tanaman",
+        title: "Pemupukan & Penyerbukan",
         description:
-          "Pangkas daun kuning/rusak dan cabang liar menggunakan gunting steril. Lakukan seminggu sekali di pagi hari.",
+          "Pupuk susulan NPK 16-16-16 150 kg/ha pada umur 15 dan 30 HST. Tambahkan KNO3 100 kg/ha saat mulai berbunga. Bantu penyerbukan dengan mengambil serbuk sari bunga jantan (pukul 6-9 pagi) lalu oleskan ke putik bunga betina. Lakukan setiap hari untuk hasil maksimal.",
       },
       {
-        title: "Pemeliharaan Rutin",
+        title: "Pengendalian Hama",
         description:
-          "Periksa tanaman setiap hari, bersihkan gulma seminggu sekali, dan catat pertumbuhan tanaman setiap minggu.",
+          "Hama utama: ulat daun (semprot Bt atau pestisida nabati), lalat buah (perangkap metil eugenol, bungkus buah dengan plastik/kertas), kutu kebul (semprot air sabun). Penyakit: embun tepung (semprot fungisida sulfur), layu bakteri (cabut tanaman, rotasi). Jaga kebersihan lahan.",
+      },
+      {
+        title: "Panen & Sortasi",
+        description:
+          "Panen umur 60-75 HST. Ciri siap panen: buah berwarna hijau merata, ukuran penuh, bila ditekan masih keras. Panen setiap 2-3 hari sekali. Gunakan gunting untuk memotong tangkai. Sortir grade A (panjang >30 cm, lurus), B (20-30 cm), C (kecil/bengkok). Simpan di suhu 10-12°C.",
       },
     ],
     tips: [
-      { icon: "💡", text: "Kumpulkan air hujan untuk irigasi hemat biaya" },
-      { icon: "📱", text: "Pasang timer otomatis untuk penyiraman konsisten" },
-      { icon: "🌿", text: "Gunakan mulsa organik untuk menjaga kelembaban" },
+      { icon: "🌸", text: "Bantu penyerbukan setiap pagi agar buah tidak busuk/keriting" },
+      { icon: "🌿", text: "Tanam di awal musim hujan untuk pengairan alami" },
+      { icon: "🪴", text: "Pare termasuk tanaman toleran kekeringan, tapi butuh air saat pembentukan buah" },
+      { icon: "📦", text: "Kemas pare dalam kardus berlubang dengan bantalan kertas" },
     ],
     links: [
-      {
-        label: "🎬 Teknik Irigasi Sederhana Lahan Kecil",
-        url: "https://www.youtube.com/results?search_query=teknik+irigasi+lahan+kecil",
-      },
-      {
-        label: "📖 Panduan Perawatan Tanaman Sehari-hari",
-        url: "https://www.youtube.com/results?search_query=perawatan+tanaman+sehari+hari",
-      },
+      { label: "🎬 Cara Menanam Pare dari Semai Hingga Panen", url: "https://www.youtube.com/results?search_query=cara+menanam+pare+suraung" },
+      { label: "🌿 Pupuk Agar Pare Berbuah Lebat", url: "https://www.youtube.com/results?search_query=pupuk+pare+berbuah+lebat" },
     ],
   },
+
+  // ===== TOMAT =====
   {
-    id: "pengendalian-hama",
-    title: "Hama & Penyakit Tanaman",
-    emoji: "🐛",
-    color: "from-rose-600 to-red-700",
+    id: "menanam-tomat",
+    title: "Budidaya Tomat Premium",
+    emoji: "🍅",
+    color: "from-red-600 to-red-700",
     difficulty: "menengah",
     readTime: "10 menit",
     summary:
-      "Kenali hama utama, penyakit tanaman, dan cara pengendalian ramah lingkungan tanpa bahan kimia berbahaya.",
+      "Teknik menanam tomat cherry dan tomat konsumsi hasil tinggi 30-50 ton/ha menggunakan sistem ajir dan irigasi tetes.",
     highlights: [
-      "🐞 Musuh alami seperti kumbang kepik membantu mengendalikan hama",
-      "🌿 Pestisida nabati dari daun mimba atau bawang putih",
-      "🛡️ Cegah lebih baik daripada mengobati!",
+      "🌱 Semai 4-5 minggu sebelum pindah tanam",
+      "🔧 Wajib pasang ajir/trellis untuk tanaman indeterminate",
+      "✂️ Pangkas tunas air (suckers) secara rutin",
+      "⏳ Panen tomat dimulai 70-90 HST",
     ],
     steps: [
       {
-        title: "Identifikasi Hama",
+        title: "Pembibitan & Persemaian",
         description:
-          "Kenali hama umum: ulat (daun bolong), kutu daun (daun keriting), thrips (bercak perak), dan belalang. Amati tanaman setiap pagi.",
+          "Gunakan benih tomat hibrida bersertifikat. Semai di tray 128 lubang menggunakan media arang sekam + kompos (2:1). Letakkan di greenhouse atau naungan plastik. Siram 2x sehari dengan spray halus. Beri pupuk daun NPK 20-20-20 dosis 1 gram/liter seminggu sekali. Bibit siap pindah umur 28-35 hari dengan 4-5 daun.",
       },
       {
-        title: "Pengendalian Alami",
+        title: "Persiapan Lahan & Mulsa",
         description:
-          "Semprotkan air sabun (1 sdm sabun cair + 1 L air) untuk kutu daun. Taburkan abu sekam di sekitar batang untuk mengusir siput.",
+          "Olah tanah sedalam 35-40 cm, taburi dolomit 1 ton/ha. Buat bedengan lebar 100 cm, tinggi 35 cm, jarak antar bedengan 60 cm. Aplikasi pupuk kandang 15 ton/ha + NPK 16-16-16 250 kg/ha. Pasang mulsa plastik hitam perak. Buat lubang tanam jarak 50x60 cm (populasi ~25.000 tanaman/ha). Pasang ajir bambu setinggi 150-200 cm.",
       },
       {
-        title: "Pestisida Nabati",
+        title: "Penanaman & Pemangkasan",
         description:
-          "Haluskan 100g bawang putih + 50g cabai + 1L air, diamkan 24 jam. Saring dan semprotkan setiap 3 hari sekali.",
+          "Pindahkan bibit sore hari. Ikat batang ke ajir dengan tali rafia longgar (jangan terlalu kencang). Pangkas tunas air (suckers) yang tumbuh di ketiak daun setiap 5-7 hari. Sisakan 1-2 batang utama saja. Buang daun bawah setinggi 30 cm setelah tanaman tinggi 50 cm untuk sirkulasi udara.",
       },
       {
-        title: "Penggunaan Musuh Alami",
+        title: "Pemupukan & Irigasi",
         description:
-          "Tanam bunga matahari dan kenikir di sekitar lahan untuk menarik kumbang kepik dan lebah yang memangsa hama.",
+          "Pupuk susulan setiap 10-14 hari: NPK 16-16-16 5 gram/tanaman pada 15 HST, NPK 12-12-17-2 7 gram + KNO3 3 gram pada 30, 50, 70 HST. Irigasi tetes 1-2 liter/tanaman/hari. Pastikan tidak ada genangan. Mulsa akan menjaga kelembaban tanah.",
       },
       {
-        title: "Karantina Tanaman Sakit",
+        title: "Perlindungan Hama & Penyakit",
         description:
-          "Pisahkan tanaman yang terinfeksi parah. Cabut dan bakar tanaman yang tidak bisa diselamatkan untuk mencegah penularan.",
+          "Hama: ulat grayak (semprot Bt), kutu daun (insektisida nabati), trips (perangkap biru). Penyakit: layu bakteri (cabut & bakar, rotasi tanaman), antraknosa (semprot fungisida), busuk buah (jaga kelembaban, panen tepat waktu). Semprot preventif fungisida tembaga setiap 2 minggu.",
+      },
+      {
+        title: "Panen & Grading",
+        description:
+          "Tomat siap panen umur 70-90 HST untuk konsumsi dan 100-120 HST untuk cherry. Ciri: buah berwarna merah 70-90% untuk pasar lokal, merah 100% untuk langsung konsumsi. Panen setiap 3-5 hari sekali. Sortir grade A (besar, mulus, >80g), B (60-80g), C (reject).",
       },
     ],
     tips: [
-      { icon: "👁️", text: "Inspeksi tanaman setiap pagi sebelum aktivitas lain" },
-      { icon: "🌼", text: "Tanam refugia (bunga) di pinggir lahan sebagai habitat musuh alami" },
-      { icon: "📸", text: "Foto hama/penyakit dan konsultasi ke petani lain" },
+      { icon: "🌱", text: "Varietas unggul: Servo, Timoty, F1 Tymoti untuk dataran rendah" },
+      { icon: "✂️", text: "Rutin pangkas tunas air agar buah besar dan merata" },
+      { icon: "🧪", text: "Kocorkan pupuk KNO3 saat buah mulai menguning untuk rasa manis" },
+      { icon: "📦", text: "Kemas tomat dalam tray/kardus satu lapis agar tidak memar" },
     ],
     links: [
-      {
-        label: "🎬 Pengendalian Hama Terpadu (IPM)",
-        url: "https://www.youtube.com/results?search_query=integrated+pest+management+ipm",
-      },
-      {
-        label: "🌿 Cara Alami Mengendalikan Hama",
-        url: "https://www.youtube.com/results?search_query=cara+alami+mengendalikan+hama",
-      },
+      { label: "🎬 Cara Menanam Tomat Dari Awal", url: "https://www.youtube.com/results?search_query=cara+menanam+tomat+dari+awal" },
+      { label: "🌿 Pupuk Tomat Agar Berbuah Lebat", url: "https://www.youtube.com/results?search_query=pupuk+tomat+agar+berbuah+lebat" },
+      { label: "🛡️ Hama Tomat & Solusinya", url: "https://www.youtube.com/results?search_query=hama+tomat+dan+cara+mengatasinya" },
     ],
   },
+
+  // ===== BAWANG MERAH =====
   {
-    id: "panen-pascapanen",
-    title: "Panen & Pascapanen",
-    emoji: "🚜",
-    color: "from-yellow-500 to-amber-600",
-    difficulty: "mahir",
-    readTime: "8 menit",
+    id: "menanam-bawang",
+    title: "Budidaya Bawang Merah",
+    emoji: "🧅",
+    color: "from-purple-500 to-purple-700",
+    difficulty: "menengah",
+    readTime: "9 menit",
     summary:
-      "Waktu panen yang tepat, teknik pemanenan untuk menjaga kualitas, serta penanganan dan penyimpanan pascapanen yang benar.",
+      "Cara menanam bawang merah dari umbi bibit hingga panen. Hasil optimal 10-15 ton/ha untuk dataran rendah hingga sedang.",
     highlights: [
-      "📅 Panen di pagi hari saat suhu masih sejuk",
-      "🔪 Gunakan pisau steril dan tajam untuk memotong",
-      "📦 Sortir hasil panen sebelum dikemas/dikirim",
+      "🧅 Gunakan umbi bibit ukuran 5-10 gram/umbi",
+      "☀️ Butuh sinar matahari penuh minimal 8 jam/hari",
+      "💧 Hentikan penyiraman 7-10 hari sebelum panen",
+      "⏳ Panen umur 60-75 HST tergantung varietas",
     ],
     steps: [
       {
-        title: "Tentukan Waktu Panen",
+        title: "Persiapan Umbi Bibit",
         description:
-          "Panen saat pagi hari (06.00-09.00). Ciri sayur siap panen: warna cerah, ukuran maksimal, dan tekstur optimal. Jangan panen saat hujan.",
+          "Pilih umbi bibit berkualitas, ukuran 5-10 gram, tidak cacat, sudah disimpan 2-3 bulan setelah panen. Belah umbi menjadi 2-4 bagian (tergantung ukuran) pastikan setiap bagian memiliki mata tunas. Rendam dalam fungisida alami (larutan bawang putih) selama 15 menit. Jemur angin 1-2 hari sebelum tanam.",
       },
       {
-        title: "Teknik Pemanenan",
+        title: "Pengolahan Lahan",
         description:
-          "Gunakan gunting/cutter steril. Potong batang menyisakan 1-2 ruas. Hindari memar pada produk. Tempatkan dalam wadah bersih beralas daun.",
+          "Olah tanah sedalam 25-30 cm. Taburi dolomit 500 kg/ha + pupuk kandang 10 ton/ha. Buat bedengan lebar 100-120 cm, tinggi 25 cm, jarak antar bedengan 40 cm. Buka mulsa plastik atau biarkan tanpa mulsa jika tanah gembur. Buat alur tanam dengan jarak 20-25 cm antar baris.",
       },
       {
-        title: "Sortasi dan Grading",
+        title: "Penanaman",
         description:
-          "Pisahkan produk berdasarkan ukuran (besar/sedang/kecil), kualitas (grade A/B), dan kondisi. Buang produk rusak atau terserang hama.",
+          "Tanam umbi dengan jarak 15x15 cm atau 20x15 cm (populasi ~350.000-400.000 umbi/ha). Tanam umbi sedalam 3-5 cm, bagian ujung menghadap ke atas. Tutup tipis dengan tanah. Siram secukupnya. Waktu tanam optimal awal musim kemarau agar bawang tidak busuk.",
       },
       {
-        title: "Pembersihan dan Pengemasan",
+        title: "Pemupukan & Perawatan",
         description:
-          "Cuci bersih dengan air mengalir, tiriskan hingga kering. Kemas dalam kemasan berlubang ventilasi. Beri label: jenis, berat, dan tanggal panen.",
+          "Umur 7 HST: NPK 16-16-16 150 kg/ha + ZA 50 kg/ha. Umur 20 HST: NPK 16-16-16 100 kg/ha. Umur 35 HST: KNO3 100 kg/ha (agar umbi besar). Siram 2x sehari, sesuaikan dengan cuaca. Gulma dibersihkan manual setiap 2 minggu. Jika cuaca ekstrem, pasang paranet 50%.",
       },
       {
-        title: "Penyimpanan",
+        title: "Panen & Pengeringan",
         description:
-          "Simpan di tempat sejuk (10-15°C) dengan kelembaban 85-95%. Sayuran daun tahan 3-5 hari, buah tahan 5-7 hari dalam penyimpanan baik.",
+          "Panen umur 60-75 HST. Ciri: 60-70% daun mulai rebah, leher batang lembek. Panen dengan cara dicabut saat tanah tidak terlalu basah. Jemur di lahan 3-7 hari (balik setiap hari) sampai benar-benar kering. Potong daun menyisakan 5-7 cm. Potensi hasil 10-15 ton/ha.",
       },
     ],
     tips: [
-      { icon: "❄️", text: "Cool chain (rantai dingin) menjaga kesegaran lebih lama" },
-      { icon: "📊", text: "Catat berat hasil panen setiap hari untuk analisis produktivitas" },
-      { icon: "💡", text: "Olah hasil panen berlebih jadi produk turunan (sayur beku, keripik)" },
+      { icon: "🧅", text: "Gunakan varietas Bima Brebes atau Tajuk untuk adaptasi luas" },
+      { icon: "💧", text: "Hentikan penyiraman 10 hari sebelum panen agar umbi tidak busuk" },
+      { icon: "🌾", text: "Tumpangsari dengan cabai atau jagung untuk efisiensi lahan" },
+      { icon: "📦", text: "Simpan bawang di rak bambu berventilasi, tahan 2-3 bulan" },
     ],
     links: [
+      { label: "🎬 Cara Menanam Bawang Merah", url: "https://www.youtube.com/results?search_query=cara+menanam+bawang+merah" },
+      { label: "🌿 Pupuk Bawang Merah Agar Besar", url: "https://www.youtube.com/results?search_query=pupuk+bawang+merah" },
+    ],
+  },
+
+  // ===== KENTANG =====
+  {
+    id: "menanam-kentang",
+    title: "Budidaya Kentang Dataran Tinggi",
+    emoji: "🥔",
+    color: "from-yellow-600 to-amber-700",
+    difficulty: "mahir",
+    readTime: "10 menit",
+    summary:
+      "Teknik menanam kentang granola dan varietas unggul lainnya di dataran tinggi (1000-2000 mdpl) dengan hasil 20-30 ton/ha.",
+    highlights: [
+      "🏔️ Wajib ditanam di dataran tinggi >1000 mdpl",
+      "🌱 Gunakan umbi bibit G0/G1/G2 (bersertifikat)",
+      "⛰️ Butuh tanah dalam, gembur, dan subur",
+      "⏳ Panen umur 90-120 hari tergantung varietas",
+    ],
+    steps: [
       {
-        label: "🎬 Teknik Panen yang Baik",
-        url: "https://www.youtube.com/results?search_query=teknik+panen+yang+baik",
+        title: "Persiapan Umbi Bibit",
+        description:
+          "Gunakan umbi bibit kentang bersertifikat (kelas G0, G1, atau G2). Potong umbi besar menjadi 2-4 bagian, masing-masing minimal 30 gram dengan 2-3 mata tunas. Rendam dalam fungisida nabati (ekstrak daun mimba) 15 menit. Angin-anginkan 1 hari di tempat teduh hingga permukaan potongan kering.",
       },
       {
-        label: "📖 Cara Penyimpanan Hasil Panen",
-        url: "https://www.youtube.com/results?search_query=penyimpanan+hasil+panen",
+        title: "Persiapan Lahan",
+        description:
+          "Olah tanah sedalam 40 cm. Buat bedengan/guludan tinggi 30-40 cm, lebar 60-80 cm dengan jarak antar guludan 70 cm. Aplikasi pupuk kandang 20 ton/ha + dolomit 1 ton/ha + NPK 16-16-16 300 kg/ha. Biarkan lahan 1 minggu sebelum tanam. pH tanah ideal 5.5-6.5.",
       },
+      {
+        title: "Penanaman & Pembumbunan",
+        description:
+          "Buat lubang tanam sedalam 10 cm di puncak guludan. Jarak tanam 30x70 cm (populasi ~23.000 tanaman/ha). Letakkan umbi dengan mata tunas menghadap ke atas. Tutup dengan tanah tipis. Lakukan pembumbunan kedua saat tanaman tinggi 20 cm (25-30 HST) untuk menutup umbi yang mulai terbentuk.",
+      },
+      {
+        title: "Pemupukan & Irigasi",
+        description:
+          "Umur 15 HST: NPK 16-16-16 100 kg/ha. Umur 30 HST: NPK 12-12-17-2 150 kg/ha. Umur 50 HST: KNO3 100 kg/ha. Irigasi tetes atau alur dengan frekuensi 2-3 hari sekali. Jangan biarkan tanah tergenang karena umbi mudah busuk. Beri mulsa jerami untuk menekan suhu tanah.",
+      },
+      {
+        title: "Panen & Sortasi",
+        description:
+          "Panen umur 90-120 HST. Ciri: daun batang mulai menguning dan mati 80%. Panen dengan garpu/cangkul hati-hati agar umbi tidak terluka. Kumpulkan dan sortir grade A (>150g), B (70-150g), C (kecil). Simpan di tempat gelap suhu 5-10°C. Hindari sinar matahari langsung yang bikin hijau (solanin).",
+      },
+    ],
+    tips: [
+      { icon: "🥔", text: "Gunakan varietas Granola L, Medians, atau Atlantik untuk hasil tinggi" },
+      { icon: "⛰️", text: "Jangan tanam kentang di lahan bekas tomat/tembakau (risiko penyakit) lama" },
+      { icon: "🧪", text: "Uji tanah setiap musim untuk jaga pH dan kesuburan" },
+      { icon: "♻️", text: "Lakukan rotasi dengan kubis/kol untuk cegah hama nematoda" },
+    ],
+    links: [
+      { label: "🎬 Cara Menanam Kentang Hasil Melimpah", url: "https://www.youtube.com/results?search_query=cara+menanam+kentang+hasil+melimpah" },
+      { label: "🌿 Pupuk Kentang Agar Umbi Besar", url: "https://www.youtube.com/results?search_query=pupuk+kentang+agar+umbi+besar" },
+    ],
+  },
+
+  // ===== SAYUR DAUN (Bayam, Kangkung, Sawi) =====
+  {
+    id: "menanam-sayur-daun",
+    title: "Sayur Daun Cepat Panen",
+    emoji: "🥬",
+    color: "from-green-500 to-emerald-600",
+    difficulty: "pemula",
+    readTime: "6 menit",
+    summary:
+      "Panduan menanam bayam, kangkung, dan sawi hijau. Panen cepat 20-35 hari. Cocok untuk pemula dan rotasi tanam cepat.",
+    highlights: [
+      "🌱 Bayam panen 20-25 hari, kangkung 25-30 hari, sawi 30-35 hari",
+      "💧 Tanaman sayur daun butuh air cukup setiap hari",
+      "🌿 Bisa ditanam di polybag atau bedengan sempit",
+      "💰 Modal kecil, untung cepat",
+    ],
+    steps: [
+      {
+        title: "Persiapan Lahan / Media",
+        description:
+          "Campur tanah + kompos + arang sekam (1:1:1) untuk media polybag. Untuk bedengan: olah sedalam 20 cm, buat bedengan lebar 100 cm. Aplikasi pupuk kandang 5 ton/ha. Jarak tanam untuk bedengan langsung: 10x10 cm (kangkung), 15x15 cm (bayam), 15x20 cm (sawi).",
+      },
+      {
+        title: "Penanaman Benih",
+        description:
+          "Semai langsung di lahan (tidak perlu pindah tanam). Tabur benih merata di bedengan atau 3-5 biji per lubang polybag. Tutup tipis dengan tanah halus (0.5 cm). Siram dengan spray halus. Untuk bedengan lebar, buat alur sedalam 1 cm dengan jarak antar alur 15-20 cm.",
+      },
+      {
+        title: "Perawatan Harian",
+        description:
+          "Siram 2x sehari (pagi & sore) dengan gembor. Setelah 7-10 hari, lakukan penjarangan untuk sayur yang terlalu rapat. Cabang/petik gulma yang tumbuh. Beri pupuk cair (NPK 20-20-20 1 gram/L) seminggu sekali mulai umur 10 hari. Untuk hasil organik, gunakan pupuk kandang cair.",
+      },
+      {
+        title: "Panen Sayur Daun",
+        description:
+          "Bayam: cabut seluruh tanaman umur 20-25 hari. Kangkung: potong batang menyisakan 5 cm dari tanah (bisa panen 3-4 kali). Sawi: cabut/potong umur 30-35 hari. Panen pagi hari. Segera cuci bersih dan kemas dalam plastik berlubang. Simpan di kulkas tahan 2-3 hari.",
+      },
+    ],
+    tips: [
+      { icon: "🌱", text: "Tanam secara bertahap setiap minggu agar panen berkelanjutan" },
+      { icon: "💧", text: "Sayur daun butuh air banyak — jangan sampai tanah kering" },
+      { icon: "🔄", text: "Rotasi jenis sayur daun setiap musim untuk cegah hama tanah" },
+    ],
+    links: [
+      { label: "🎬 Cara Menanam Bayam Hidroponik", url: "https://www.youtube.com/results?search_query=cara+menanam+bayam+hidroponik" },
+      { label: "🌿 Cara Menanam Kangkung", url: "https://www.youtube.com/results?search_query=cara+menanam+kangkung+di+polybag" },
+      { label: "📖 Panduan Lengkap Sawi Hijau", url: "https://www.youtube.com/results?search_query=cara+menanam+sawi+hijau+organik" },
     ],
   },
 ];

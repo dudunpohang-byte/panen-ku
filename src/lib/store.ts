@@ -1,7 +1,8 @@
 // Local-only data store for Panenku MVP.
-// All data persists in localStorage. No backend.
+// Semua data disimpan di localStorage. Backend opsional untuk shipments/diskon.
 
 import { CITIES, distanceKm, getCity } from "./cities";
+import { API_BASE_URL } from "./api";
 
 export type Role = "buyer" | "farmer" | "admin";
 
@@ -10,24 +11,25 @@ export type FarmerStatus = "pending" | "approved" | "rejected";
 export interface User {
   id: string;
   phone: string;
-  pin: string; // 6 digits — demo only, stored locally
+  pin: string;
   name: string;
   role: Role;
-  avatar?: string; // data URL foto profil
-  // Farmer-only:
+  avatar?: string;
   farmName?: string;
-  farmLocation?: string; // free-text label (kept for backward compat)
-  farmCityId?: string; // referenced city id from CITIES
-  fullAddress?: string; // alamat lengkap kebun (jalan, RT/RW, kel/kec)
-  farmDescription?: string; // deskripsi toko/kebun
-  farmEstablished?: string; // tahun berdiri kebun (YYYY)
-  certifications?: string[]; // mis. ["Organik", "Prima 3", "GAP"]
-  status?: FarmerStatus; // farmer verification
+  farmLocation?: string;
+  farmCityId?: string;
+  fullAddress?: string;
+  farmDescription?: string;
+  farmEstablished?: string;
+  certifications?: string[];
+  status?: FarmerStatus;
   balance?: number;
   pendingBalance?: number;
-  certificateImage?: string; // data URL foto sertifikat (opsional)
-  shippingPackagingMethod?: string; // wajib bagi petani: cara mengemas & mengirim paket
+  certificateImage?: string;
+  shippingPackagingMethod?: string;
 }
+
+export type ShippingOption = "diantar_petani" | "pihak_ketiga";
 
 export interface Product {
   id: string;
@@ -42,30 +44,32 @@ export interface Product {
   stock: number;
   description: string;
   image?: string;
-  /** Foto tambahan (selain `image`). Dipakai untuk galeri detail produk. */
   images?: string[];
   rating: number;
   sold: number;
-  harvestDate?: string; // tanggal panen
-  bestBeforeDays?: number; // baik dikonsumsi dalam X hari setelah panen
+  harvestDate?: string;
+  bestBeforeDays?: number;
   pickupAvailable?: boolean;
-  cultivationMethod?: string; // mis. "Organik", "Hidroponik", "Konvensional ramah lingkungan"
-  certifications?: string[]; // sertifikat khusus produk
-  origin?: string; // daerah asal: "Lereng Merapi, Magelang"
-  packaging?: string; // "Karung 5 kg" / "Plastik food-grade"
-  weightPerUnit?: string; // "1 kg per pack"
-  storageInfo?: string; // tips penyimpanan
-  // ---- Pre-Order H-1 ----
-  preOrder?: boolean; // true = produk belum dipanen, hanya bisa pre-order
-  harvestPlannedDate?: string; // YYYY-MM-DD — perkiraan tanggal panen
+  cultivationMethod?: string;
+  certifications?: string[];
+  origin?: string;
+  packaging?: string;
+  weightPerUnit?: string;
+  storageInfo?: string;
+  preOrder?: boolean;
+  harvestPlannedDate?: string;
+  // === NEW FIELDS ===
+  shippingOption?: ShippingOption;     // pilihan: "diantar_petani" | "pihak_ketiga"
+  shippingProofPhoto?: boolean;        // petani wajib foto saat barang dikirim
+  estimatedDelivery?: string;          // perkiraan sampai (misal: "1-2 jam", "H+1")
+  courierName?: string;                // nama pengirim (jika diantar petani)
+  deliveryChecklist?: boolean;         // checklist "benar-benar akan sampai"
 }
 
 export interface CartItem {
   productId: string;
   qty: number;
-  /** Harga hasil tawar-menawar. Jika ada, override harga normal produk. */
   priceOverride?: number;
-  /** ID pesan tawaran asal (untuk pelacakan). */
   offerMsgId?: string;
 }
 
@@ -74,9 +78,14 @@ export type OrderStatus =
   | "dibayar"
   | "disiapkan"
   | "dikirim"
-  | "selesai";
+  | "selesai"
+  | "dibatalkan";
 
 export type ShippingMethod = "antar_sendiri" | "jasa_kirim";
+
+export type PaymentProvider = "xendit_qris" | "xendit_transfer" | "cod";
+
+export type PaymentStatus = "pending" | "paid" | "failed" | "expired";
 
 export interface OrderItem {
   productId: string;
@@ -86,7 +95,6 @@ export interface OrderItem {
   farmerName: string;
   price: number;
   qty: number;
-  // Pre-order info (di-snapshot saat checkout supaya invoice & timeline akurat)
   preOrder?: boolean;
   harvestPlannedDate?: string;
 }
@@ -107,21 +115,45 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   shippingMethod: ShippingMethod;
+  paymentProvider: PaymentProvider;
+  paymentStatus: PaymentStatus;
+  paymentMethod?: string; // kompatibilitas lama: qris | transfer | cod
+  paymentAmount?: number;
+  paymentLink?: string;
+  qrString?: string;
+  trackingCode?: string;
+  courier?: string;
+  courierService?: string;
+  courierTrackingId?: string;
 }
 
+export type AdminFeeType = "percentage" | "flat_per_5kg" | "hybrid";
+
 export interface AdminSettings {
-  // Platform commission (% of subtotal, taken from farmer payout)
   adminFeePercent: number;
-  // Shipping rates (Rp)
-  ownDeliveryBaseFee: number; // jasa kirim sendiri petani
+  feeType: AdminFeeType;
+  feeBasePerOrder: number;   // untuk hybrid: Rp1.500 per transaksi
+  feePerKg: number;          // untuk hybrid: Rp250 per kg
+  feeMin: number;            // minimal fee
+  feeMax: number;            // cap maksimal fee
+  ownDeliveryBaseFee: number;
   ownDeliveryPerKm: number;
-  thirdPartyBaseFee: number; // jasa kirim pihak ketiga
+  thirdPartyBaseFee: number;
   thirdPartyPerKm: number;
   freeShippingMinSubtotal: number;
+  security_level?: string;
+  require_2fa?: boolean;
+  session_timeout_minutes?: number;
+  max_login_attempts?: number;
 }
 
 export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
   adminFeePercent: 5,
+  feeType: "hybrid",
+  feeBasePerOrder: 1500,
+  feePerKg: 250,
+  feeMin: 1500,
+  feeMax: 10000,
   ownDeliveryBaseFee: 7000,
   ownDeliveryPerKm: 0,
   thirdPartyBaseFee: 5000,
@@ -129,8 +161,7 @@ export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
   freeShippingMinSubtotal: 100000,
 };
 
-// Aturan pemesanan global
-export const MIN_ORDER_QTY = 5; // minimal 5 (kg/unit) per produk
+export const MIN_ORDER_QTY = 5;
 
 const KEYS = {
   users: "panenku.users",
@@ -143,7 +174,6 @@ const KEYS = {
   adminLogs: "panenku.adminLogs",
 };
 
-// ---------- low-level helpers ----------
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
@@ -153,13 +183,14 @@ function read<T>(key: string, fallback: T): T {
     return fallback;
   }
 }
+
 function write<T>(key: string, value: T) {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
   window.dispatchEvent(new CustomEvent("panenku:change", { detail: { key } }));
 }
 
-// ---------- users / auth ----------
+// ========== USERS / AUTH ==========
 export function getUsers(): User[] {
   return read<User[]>(KEYS.users, []);
 }
@@ -205,7 +236,6 @@ export function updateUser(updated: User) {
   if (session?.id === updated.id) setSession(updated);
 }
 
-// Admin login: hardcoded password, any username.
 const ADMIN_PASSWORD = "panenKUgaRUT7575";
 export function adminLogin(username: string, password: string): User {
   if (password !== ADMIN_PASSWORD) throw new Error("Password admin salah");
@@ -220,22 +250,18 @@ export function adminLogin(username: string, password: string): User {
   setSession(adminUser);
   return adminUser;
 }
-
-// ---------- admin confirmation & audit log ----------
 export function verifyAdminPassword(password: string): boolean {
   return password === ADMIN_PASSWORD;
 }
 
-export type AdminLogStatus = "success" | "failed" | "cancelled";
-
 export interface AdminLog {
   id: string;
-  timestampUtc: string; // ISO UTC
+  timestampUtc: string;
   adminId: string;
   adminName: string;
-  action: string; // mis. "VERIFY_FARMER"
-  target: string; // ringkasan target (nama + id)
-  status: AdminLogStatus;
+  action: string;
+  target: string;
+  status: "success" | "failed" | "cancelled";
   detail?: string;
 }
 
@@ -249,10 +275,11 @@ export function appendAdminLog(entry: Omit<AdminLog, "id" | "timestampUtc">): Ad
     timestampUtc: new Date().toISOString(),
   };
   const all = getAdminLogs();
-  // Keep last 500 entries
-  const next = [log, ...all].slice(0, 500);
-  write(KEYS.adminLogs, next);
+  setAdminLogs([log, ...all].slice(0, 500));
   return log;
+}
+export function setAdminLogs(logs: AdminLog[]) {
+  write(KEYS.adminLogs, logs);
 }
 
 export function setFarmerStatus(farmerId: string, status: FarmerStatus) {
@@ -262,15 +289,13 @@ export function setFarmerStatus(farmerId: string, status: FarmerStatus) {
   setUsers(users);
 }
 
-// ---------- products ----------
+// ========== PRODUCTS ==========
 export function getProducts(): Product[] {
   return read<Product[]>(KEYS.products, []);
 }
 export function setProducts(products: Product[]) {
   write(KEYS.products, products);
 }
-
-// Produk yang tampil ke pembeli — hanya dari petani yang sudah approved.
 export function getVisibleProducts(): Product[] {
   const users = getUsers();
   const approvedFarmerIds = new Set(
@@ -278,14 +303,8 @@ export function getVisibleProducts(): Product[] {
   );
   return getProducts().filter((p) => approvedFarmerIds.has(p.farmerId));
 }
-
 export function addProduct(p: Omit<Product, "id" | "rating" | "sold">): Product {
-  const product: Product = {
-    ...p,
-    id: `p_${Date.now()}`,
-    rating: 5,
-    sold: 0,
-  };
+  const product: Product = { ...p, id: `p_${Date.now()}`, rating: 5, sold: 0 };
   setProducts([...getProducts(), product]);
   return product;
 }
@@ -296,7 +315,7 @@ export function deleteProduct(id: string) {
   setProducts(getProducts().filter((x) => x.id !== id));
 }
 
-// ---------- cart ----------
+// ========== CART ==========
 type CartMap = Record<string, CartItem[]>;
 export function getCart(buyerId: string): CartItem[] {
   const all = read<CartMap>(KEYS.cart, {});
@@ -314,11 +333,6 @@ export function addToCart(buyerId: string, productId: string, qty: number) {
   else cart.push({ productId, qty });
   setCart(buyerId, cart);
 }
-
-/**
- * Tambah/ganti item di keranjang dengan harga hasil tawar-menawar.
- * Item dengan productId sama akan diganti (qty & harga = hasil kesepakatan terbaru).
- */
 export function addNegotiatedToCart(
   buyerId: string,
   productId: string,
@@ -334,7 +348,7 @@ export function clearCart(buyerId: string) {
   setCart(buyerId, []);
 }
 
-// ---------- orders ----------
+// ========== ORDERS ==========
 export function getOrders(): Order[] {
   return read<Order[]>(KEYS.orders, []);
 }
@@ -346,6 +360,11 @@ export function createOrder(order: Omit<Order, "id" | "createdAt">): Order {
     ...order,
     id: `o_${Date.now()}`,
     createdAt: new Date().toISOString(),
+    trackingCode: order.trackingCode || `PNK-${Date.now().toString(36).toUpperCase()}`,
+    qrString: JSON.stringify({
+      id: `o_${Date.now()}`,
+      t: order.trackingCode || `PNK-${Date.now().toString(36).toUpperCase()}`,
+    }),
   };
   setOrders([o, ...getOrders()]);
 
@@ -360,7 +379,6 @@ export function createOrder(order: Omit<Order, "id" | "createdAt">): Order {
     }
     const farmer = users.find((u) => u.id === it.farmerId);
     if (farmer && farmer.role === "farmer") {
-      // Net to farmer = gross - admin fee
       const gross = it.price * it.qty;
       const fee = (gross * settings.adminFeePercent) / 100;
       farmer.pendingBalance = (farmer.pendingBalance ?? 0) + (gross - fee);
@@ -375,7 +393,6 @@ export function updateOrderStatus(orderId: string, status: OrderStatus) {
   const o = orders.find((x) => x.id === orderId);
   if (!o) return;
   o.status = status;
-
   if (status === "selesai") {
     const settings = getAdminSettings();
     const users = getUsers();
@@ -394,7 +411,7 @@ export function updateOrderStatus(orderId: string, status: OrderStatus) {
   setOrders(orders);
 }
 
-// ---------- preferences ----------
+// ========== PREFS ==========
 export interface Prefs {
   largeFont: boolean;
   voiceOver: boolean;
@@ -406,22 +423,67 @@ export function setPrefs(p: Prefs) {
   write(KEYS.prefs, p);
 }
 
-// ---------- admin settings ----------
+// ========== ADMIN SETTINGS ==========
 export function getAdminSettings(): AdminSettings {
   const stored = read<Partial<AdminSettings> & { __v?: number }>(KEYS.settings, {});
-  // Migrasi v2: pakai tarif flat baru (petani 7.000, paket 5.000)
-  if (typeof window !== "undefined" && stored.__v !== 2) {
-    const migrated: AdminSettings = { ...DEFAULT_ADMIN_SETTINGS, adminFeePercent: stored.adminFeePercent ?? DEFAULT_ADMIN_SETTINGS.adminFeePercent, freeShippingMinSubtotal: stored.freeShippingMinSubtotal ?? DEFAULT_ADMIN_SETTINGS.freeShippingMinSubtotal };
-    write(KEYS.settings, { ...migrated, __v: 2 });
+  // Migrasi dari v2 ke v3: tambah field hybrid fee
+  if (typeof window !== "undefined" && (!stored.__v || stored.__v < 3)) {
+    const migrated: AdminSettings = {
+      ...DEFAULT_ADMIN_SETTINGS,
+      adminFeePercent: stored.adminFeePercent ?? DEFAULT_ADMIN_SETTINGS.adminFeePercent,
+      ownDeliveryBaseFee: stored.ownDeliveryBaseFee ?? DEFAULT_ADMIN_SETTINGS.ownDeliveryBaseFee,
+      ownDeliveryPerKm: stored.ownDeliveryPerKm ?? DEFAULT_ADMIN_SETTINGS.ownDeliveryPerKm,
+      thirdPartyBaseFee: stored.thirdPartyBaseFee ?? DEFAULT_ADMIN_SETTINGS.thirdPartyBaseFee,
+      thirdPartyPerKm: stored.thirdPartyPerKm ?? DEFAULT_ADMIN_SETTINGS.thirdPartyPerKm,
+      freeShippingMinSubtotal: stored.freeShippingMinSubtotal ?? DEFAULT_ADMIN_SETTINGS.freeShippingMinSubtotal,
+      feeType: stored.feeType ?? DEFAULT_ADMIN_SETTINGS.feeType,
+      feeBasePerOrder: stored.feeBasePerOrder ?? DEFAULT_ADMIN_SETTINGS.feeBasePerOrder,
+      feePerKg: stored.feePerKg ?? DEFAULT_ADMIN_SETTINGS.feePerKg,
+      feeMin: stored.feeMin ?? DEFAULT_ADMIN_SETTINGS.feeMin,
+      feeMax: stored.feeMax ?? DEFAULT_ADMIN_SETTINGS.feeMax,
+      security_level: stored.security_level,
+      require_2fa: stored.require_2fa,
+      session_timeout_minutes: stored.session_timeout_minutes,
+      max_login_attempts: stored.max_login_attempts,
+    };
+    write(KEYS.settings, { ...migrated, __v: 3 });
     return migrated;
   }
-  return { ...DEFAULT_ADMIN_SETTINGS, ...stored };
+  const s = { ...DEFAULT_ADMIN_SETTINGS, ...stored };
+  // Remove __v from stored if present (internal version field)
+  return s;
 }
 export function setAdminSettings(s: AdminSettings) {
-  write(KEYS.settings, { ...s, __v: 2 });
+  write(KEYS.settings, { ...s, __v: 3 });
 }
 
-// ---------- shipping calculation ----------
+/**
+ * Hitung admin fee berdasarkan pengaturan admin (support hybrid/percentage/flat)
+ */
+export function calculateAdminFee(subtotal: number, totalKg: number = 0): number {
+  const s = getAdminSettings();
+  
+  switch (s.feeType) {
+    case "hybrid":
+      // Base per order + per kg, dengan minimal dan maksimal
+      const fee = (s.feeBasePerOrder ?? 1500) + (s.feePerKg ?? 250) * Math.ceil(totalKg);
+      return Math.max(s.feeMin ?? 1500, Math.min(fee, s.feeMax ?? 10000));
+      
+    case "flat_per_5kg":
+      // Rp2.500 per 5kg, pro-rata
+      const per5kg = Math.ceil(totalKg / 5);
+      const flatFee = per5kg * 2500;
+      return Math.min(flatFee, s.feeMax ?? 10000);
+      
+    case "percentage":
+    default:
+      // Default: persentase dari subtotal
+      const perc = Math.round((subtotal * s.adminFeePercent) / 100);
+      return perc;
+  }
+}
+
+// ========== SHIPPING QUOTE ==========
 export interface ShippingQuote {
   method: ShippingMethod;
   label: string;
@@ -441,10 +503,8 @@ export function calculateShippingOptions(
   const farmer = getCity(farmerCityId);
   const dist = buyer && farmer ? distanceKm(buyer, farmer) : 0;
   const eligibleFreeShip = subtotal >= settings.freeShippingMinSubtotal;
-
   const own = settings.ownDeliveryBaseFee + dist * settings.ownDeliveryPerKm;
   const tp = settings.thirdPartyBaseFee + dist * settings.thirdPartyPerKm;
-
   return [
     {
       method: "antar_sendiri",
@@ -456,7 +516,7 @@ export function calculateShippingOptions(
     },
     {
       method: "jasa_kirim",
-      label: "Jasa Kirim",
+      label: "Jasa Kirim (Gojek/Lalamove)",
       desc: `Kurir pihak ketiga · ${dist} km`,
       fee: eligibleFreeShip ? 0 : tp,
       distanceKm: dist,
@@ -465,10 +525,10 @@ export function calculateShippingOptions(
   ];
 }
 
-// Re-export cities for convenience
+// Re-export cities
 export { CITIES };
 
-// ---------- chat ----------
+// ========== CHAT ==========
 export type ChatMessageType = "text" | "image" | "offer" | "call";
 
 export interface ChatMessage {
@@ -477,9 +537,9 @@ export interface ChatMessage {
   senderId: string;
   type: ChatMessageType;
   text: string;
-  image?: string; // data URL untuk foto
-  offerPrice?: number; // harga tawaran
-  offerQty?: number; // jumlah tawaran
+  image?: string;
+  offerPrice?: number;
+  offerQty?: number;
   offerStatus?: "pending" | "accepted" | "rejected" | "added";
   createdAt: string;
 }
@@ -563,8 +623,6 @@ export function sendChatMessage(
   };
   const all = getChatMessages();
   setChatMessages([...all, msg]);
-
-  // Update room lastMessage & unread
   const rooms = getChatRooms();
   const room = rooms.find((r) => r.id === roomId);
   if (room) {
@@ -603,6 +661,88 @@ export function getRoomMessages(roomId: string): ChatMessage[] {
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 }
 
+// ========== SHIPMENT TYPES ==========
+export interface ShipmentEvent {
+  id: string;
+  shipment_id: string;
+  event_type: string;
+  location?: string;
+  notes?: string;
+  timestamp: string;
+  created_at?: string;
+}
+
+export interface Shipment {
+  id: string;
+  order_id: string;
+  farmer_id: string;
+  buyer_id: string;
+  courier_name: string;
+  tracking_number?: string;
+  shipping_service?: string;
+  cost: number;
+  status: string;
+  location?: string;
+  notes?: string;
+  proof_of_delivery?: string;
+  estimated_delivery?: string;
+  actual_delivery?: string;
+  events?: ShipmentEvent[];
+  created_at: string;
+  buyer_name?: string;
+  shipping_address?: string;
+}
+
+export async function getShipmentByOrder(orderId: string): Promise<Shipment | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/shipments/order/${orderId}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function createShipment(data: {
+  order_id: string;
+  farmer_id: string;
+  courier_name?: string;
+  tracking_number?: string;
+  shipping_service?: string;
+  notes?: string;
+}): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/shipments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) return null;
+    const result = await res.json();
+    return result.id;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateShipmentStatus(shipmentId: string, data: {
+  status: string;
+  location?: string;
+  notes?: string;
+  proof_of_delivery?: string;
+}): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/shipments/${shipmentId}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function getRoomsForUser(userId: string, role: "buyer" | "farmer"): ChatRoom[] {
   const rooms = getChatRooms();
   const filtered =
@@ -617,13 +757,10 @@ export function getRoomsForUser(userId: string, role: "buyer" | "farmer"): ChatR
 }
 
 export function getUnreadCount(userId: string, role: "buyer" | "farmer"): number {
-  return getRoomsForUser(userId, role).reduce((sum, r) => {
-    return sum + (role === "buyer" ? r.unreadBuyer : r.unreadFarmer);
-  }, 0);
+  return getRoomsForUser(userId, role).reduce((sum, r) => sum + (role === "buyer" ? r.unreadBuyer : r.unreadFarmer), 0);
 }
 
-// ---------- seed demo data ----------
-// Buat dummy foto sertifikat (SVG data URL) — biar terlihat seperti sertifikat asli.
+// ========== DEMO SEED ==========
 function makeCertificateImage(title: string, holder: string, code: string, color = "#16a34a"): string {
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="800" height="560">
@@ -659,8 +796,6 @@ function makeCertificateImage(title: string, holder: string, code: string, color
 
 export function seedIfEmpty() {
   if (typeof window === "undefined") return;
-
-  // Always ensure demo farmer exists & is approved (idempotent)
   const users = getUsers();
   let farmer = users.find((u) => u.phone === "081200000001");
   if (!farmer) {
@@ -715,7 +850,6 @@ export function seedIfEmpty() {
     if (changed) setUsers(getUsers().map((u) => (u.id === farmer!.id ? farmer! : u)));
   }
 
-  // Demo pending farmer (untuk admin verifikasi)
   if (!getUsers().find((u) => u.phone === "081200000002")) {
     setUsers([
       ...getUsers(),
@@ -739,17 +873,13 @@ export function seedIfEmpty() {
     ]);
   }
 
-  // Re-seed demo products if existing seed lacks new detailed fields.
-  // Only touches the demo seeds (id: p_seed_*), never user-created products.
   const existing = getProducts();
   const seedExisting = existing.filter((p) => p.id.startsWith("p_seed_"));
   const seedHasNewFields = seedExisting.length >= 55 && seedExisting.every((p) => !!p.weightPerUnit);
   if (seedExisting.length >= 55 && seedHasNewFields) {
-    // Pastikan petani-petani extra ada (jika user pernah hapus user list).
     ensureExtraFarmers();
     return;
   }
-  // Drop legacy demo seeds, keep user-created products.
   const userProducts = existing.filter((p) => !p.id.startsWith("p_seed_"));
   setProducts(userProducts);
   const farmerId = farmer!.id;
@@ -898,64 +1028,6 @@ export function seedIfEmpty() {
       weightPerUnit: "1 kg per pack",
       storageInfo: "Tahan 1 minggu di suhu ruang, 3 minggu di kulkas.",
     },
-    {
-      ...baseFarmerInfo,
-      name: "Pisang Raja",
-      category: "buah",
-      price: 20000,
-      unit: "sisir",
-      stock: 15,
-      description:
-        "Pisang raja matang pohon, kulit kuning cerah, daging tebal, manis legit. Cocok dimakan langsung atau digoreng.",
-      image: "asset:pisang",
-      harvestDate: today,
-      bestBeforeDays: 5,
-      pickupAvailable: true,
-      cultivationMethod: "Konvensional",
-      origin: "Magelang, Jawa Tengah",
-      packaging: "Sisir utuh dibungkus kertas koran",
-      weightPerUnit: "±2 kg per sisir",
-      storageInfo: "Simpan di suhu ruang, hindari sinar matahari langsung.",
-    },
-    {
-      ...baseFarmerInfo,
-      name: "Jahe Merah",
-      category: "rempah",
-      price: 35000,
-      unit: "kg",
-      stock: 18,
-      description:
-        "Jahe merah segar dengan aroma kuat, kandungan minyak atsiri tinggi. Cocok untuk jamu, wedang, dan obat herbal.",
-      image: "asset:jahe",
-      bestBeforeDays: 21,
-      pickupAvailable: false,
-      cultivationMethod: "Organik",
-      certifications: ["Organik Indonesia"],
-      origin: "Magelang, Jawa Tengah",
-      packaging: "Plastik food-grade 500 g",
-      weightPerUnit: "500 g per pack",
-      storageInfo: "Simpan di tempat kering, bisa juga di kulkas.",
-    },
-    {
-      ...baseFarmerInfo,
-      name: "Kentang Granola",
-      category: "sayur",
-      price: 16000,
-      unit: "kg",
-      stock: 45,
-      description:
-        "Kentang Granola lokal ukuran sedang, kulit halus dan daging kuning. Ideal untuk perkedel, sup, dan kentang goreng rumahan.",
-      image: "asset:kentang",
-      harvestDate: yesterday,
-      bestBeforeDays: 21,
-      pickupAvailable: true,
-      cultivationMethod: "Konvensional ramah lingkungan",
-      certifications: ["Prima 3"],
-      origin: "Dataran Tinggi Dieng (mitra)",
-      packaging: "Karung jaring 1 kg",
-      weightPerUnit: "1 kg per pack",
-      storageInfo: "Simpan di tempat sejuk dan gelap.",
-    },
   ];
   const newSeeds = seedProducts.map((p, i) => ({ ...p, id: `p_seed_${i}`, rating: 4.7 + (i % 3) * 0.1, sold: 20 + i * 5 }));
 
@@ -967,7 +1039,6 @@ export function seedIfEmpty() {
   // Seed demo chat data
   const existingRooms = getChatRooms();
   if (existingRooms.length === 0) {
-    // Create demo buyer if not exists
     let buyer = getUsers().find((u) => u.phone === "081300000001");
     if (!buyer) {
       buyer = {
@@ -979,7 +1050,6 @@ export function seedIfEmpty() {
       };
       setUsers([...getUsers(), buyer]);
     }
-
     const room: ChatRoom = {
       id: "room_demo_1",
       buyerId: buyer.id,
@@ -992,7 +1062,6 @@ export function seedIfEmpty() {
       unreadFarmer: 1,
     };
     setChatRooms([room]);
-
     const now = Date.now();
     const msgs: ChatMessage[] = [
       {
@@ -1036,8 +1105,7 @@ export function seedIfEmpty() {
   }
 }
 
-// ===================== Extra dummy data (50 produk + banyak petani) =====================
-
+// ===================== Extra dummy data =====================
 interface ExtraFarmerSpec {
   id: string;
   phone: string;
@@ -1051,7 +1119,6 @@ interface ExtraFarmerSpec {
   desc: string;
   certs: string[];
   packaging: string;
-  // Status: approved kecuali ditandai pending — supaya produk-nya tampil di marketplace.
   status?: FarmerStatus;
   certColor?: string;
 }
@@ -1166,7 +1233,6 @@ const EXTRA_FARMERS: ExtraFarmerSpec[] = [
     packaging: "Tiap buah dibalut jaring foam, kardus berlubang dengan bantalan koran kering.",
     certColor: "#be123c",
   },
-  // Petani pending (untuk demo verifikasi admin) — TIDAK akan tampil produk-nya
   {
     id: "u_seed_farmer_13", phone: "081200000013", pin: "131313", name: "Pak Hadi",
     farmName: "Tani Maju Kediri", cityId: "kediri",
@@ -1212,12 +1278,10 @@ export function ensureExtraFarmers() {
 }
 
 function buildExtraSeedProducts(): Product[] {
-  // Template produk: 50 entri tersebar di berbagai petani approved.
   const approvedFarmers = EXTRA_FARMERS.filter((f) => (f.status ?? "approved") === "approved");
   const today = new Date().toISOString().slice(0, 10);
   const yest = new Date(Date.now() - 86400_000).toISOString().slice(0, 10);
-  const dayAfter = (d: number) =>
-    new Date(Date.now() + d * 86400_000).toISOString().slice(0, 10);
+  const dayAfter = (d: number) => new Date(Date.now() + d * 86400_000).toISOString().slice(0, 10);
 
   type Tpl = {
     name: string; category: string; price: number; unit: string; stock: number;
@@ -1254,35 +1318,8 @@ function buildExtraSeedProducts(): Product[] {
     { name: "Tomat Cherry", category: "sayur", price: 28000, unit: "pack", stock: 20, description: "Tomat cherry merah-kuning campur, manis untuk salad.", image: "asset:tomat", bestBeforeDays: 10, certifications: ["Hidroponik Premium"], packaging: "Tray plastik food-grade 250 g", weightPerUnit: "250 g", storageInfo: "Suhu ruang sejuk." },
     { name: "Timun Jepang", category: "sayur", price: 18000, unit: "kg", stock: 22, description: "Timun jepang kulit halus, biji sedikit, renyah.", image: "asset:bayam", bestBeforeDays: 10, packaging: "Plastik 500 g", weightPerUnit: "500 g", storageInfo: "Kulkas." },
     { name: "Mentimun Lokal", category: "sayur", price: 8000, unit: "kg", stock: 40, description: "Mentimun lokal renyah, untuk lalapan & rujak.", image: "asset:bayam", bestBeforeDays: 7, packaging: "Karung jaring 1 kg", weightPerUnit: "1 kg", storageInfo: "Kulkas." },
-    { name: "Apel Malang Manalagi", category: "buah", price: 25000, unit: "kg", stock: 40, description: "Apel Manalagi Malang manis renyah, kulit hijau cerah.", image: "asset:jeruk", bestBeforeDays: 21, certifications: ["GAP Buah"], packaging: "Kardus berlubang, tiap apel dibalut foam net", weightPerUnit: "±1 kg (5-6 buah)", storageInfo: "Kulkas hingga 1 bulan." },
-    { name: "Apel Rome Beauty", category: "buah", price: 30000, unit: "kg", stock: 25, description: "Apel Rome Beauty asam manis, sangat juicy.", image: "asset:jeruk", bestBeforeDays: 21, packaging: "Kardus berlubang", weightPerUnit: "1 kg", storageInfo: "Kulkas." },
-    { name: "Jeruk Medan", category: "buah", price: 22000, unit: "kg", stock: 50, description: "Jeruk medan manis, kulit halus oranye terang.", image: "asset:jeruk", bestBeforeDays: 14, certifications: ["Prima 3"], packaging: "Kardus berlubang dengan bantalan kertas", weightPerUnit: "1 kg (~8 buah)", storageInfo: "Suhu ruang 1 minggu, kulkas 3 minggu." },
-    { name: "Stroberi Berastagi", category: "buah", price: 45000, unit: "pack", stock: 18, description: "Stroberi Berastagi, manis-asam segar, dipetik tangan.", image: "asset:jeruk", bestBeforeDays: 5, certifications: ["GAP Buah"], packaging: "Tray plastik tebal 250 g + foam pelindung", weightPerUnit: "250 g per pack", storageInfo: "Kulkas, konsumsi 3-5 hari." },
-    { name: "Markisa Asam", category: "buah", price: 22000, unit: "kg", stock: 20, description: "Markisa asam pekat untuk sirup & jus segar.", image: "asset:jeruk", bestBeforeDays: 14, packaging: "Kardus berlubang", weightPerUnit: "1 kg", storageInfo: "Suhu ruang." },
-    { name: "Mangga Harum Manis", category: "buah", price: 25000, unit: "kg", stock: 30, description: "Mangga harum manis pulen, aroma kuat, daging tebal.", image: "asset:jeruk", bestBeforeDays: 7, packaging: "Kardus dengan koran kering", weightPerUnit: "±1 kg (2-3 buah)", storageInfo: "Suhu ruang sampai matang, lalu kulkas." },
-    { name: "Alpukat Mentega", category: "buah", price: 35000, unit: "kg", stock: 22, description: "Alpukat mentega daging kuning legit, biji kecil.", image: "asset:jeruk", bestBeforeDays: 7, packaging: "Kardus berlubang, bantalan koran", weightPerUnit: "±1 kg (3-4 buah)", storageInfo: "Suhu ruang hingga matang." },
-    { name: "Pisang Cavendish", category: "buah", price: 18000, unit: "sisir", stock: 30, description: "Pisang Cavendish premium, daging kuning manis, kulit mulus.", image: "asset:pisang", bestBeforeDays: 7, certifications: ["GAP Buah"], packaging: "Per sisir dibungkus plastik tebal", weightPerUnit: "±1,5 kg per sisir", storageInfo: "Suhu ruang." },
-    { name: "Pisang Tanduk", category: "buah", price: 22000, unit: "sisir", stock: 18, description: "Pisang tanduk besar, cocok digoreng dan dipanggang.", image: "asset:pisang", bestBeforeDays: 5, packaging: "Per sisir koran kering", weightPerUnit: "±2 kg", storageInfo: "Suhu ruang." },
-    { name: "Salak Pondoh Sleman", category: "buah", price: 20000, unit: "kg", stock: 25, description: "Salak pondoh Sleman manis renyah, tanpa sepat.", image: "asset:jeruk", bestBeforeDays: 10, packaging: "Kardus berlubang, kertas bantalan", weightPerUnit: "1 kg", storageInfo: "Suhu ruang." },
-    { name: "Beras Merah Organik", category: "beras", price: 28000, unit: "kg", stock: 50, description: "Beras merah organik whole grain, kaya serat & antioksidan.", image: "asset:beras", bestBeforeDays: 180, certifications: ["Organik Indonesia", "USDA Organic"], packaging: "Vakum 2 kg", weightPerUnit: "2 kg per pack", storageInfo: "Wadah tertutup." },
-    { name: "Beras Hitam Sleman", category: "beras", price: 35000, unit: "kg", stock: 25, description: "Beras hitam aromatik, indeks glikemik rendah.", image: "asset:beras", bestBeforeDays: 180, certifications: ["Organik Indonesia"], packaging: "Vakum 1 kg", weightPerUnit: "1 kg per pack", storageInfo: "Wadah tertutup." },
-    { name: "Beras IR64 Premium", category: "beras", price: 13000, unit: "kg", stock: 200, description: "Beras putih IR64 premium, pulen, tidak patah.", image: "asset:beras", bestBeforeDays: 180, packaging: "Karung 5 kg", weightPerUnit: "5 kg", storageInfo: "Tempat kering tertutup." },
-    { name: "Kopi Lampung Robusta", category: "rempah", price: 95000, unit: "kg", stock: 30, description: "Biji kopi robusta Tanggamus, roast medium, rasa cokelat & cengkeh.", image: "asset:jahe", bestBeforeDays: 180, certifications: ["Indikasi Geografis Lampung"], packaging: "Pouch vakum 250 g + valve aroma", weightPerUnit: "250 g per pack", storageInfo: "Wadah kedap udara, hindari sinar matahari." },
-    { name: "Kunyit Segar", category: "rempah", price: 28000, unit: "kg", stock: 22, description: "Kunyit kuning tua, aroma kuat, untuk jamu kunyit asam.", image: "asset:jahe", bestBeforeDays: 21, certifications: ["Organik Indonesia"], packaging: "Plastik food-grade 500 g", weightPerUnit: "500 g", storageInfo: "Tempat kering / kulkas." },
-    { name: "Lengkuas", category: "rempah", price: 22000, unit: "kg", stock: 20, description: "Lengkuas segar aroma kuat, untuk soto & rendang.", image: "asset:jahe", bestBeforeDays: 21, packaging: "Plastik 500 g", weightPerUnit: "500 g", storageInfo: "Tempat kering." },
-    { name: "Sereh", category: "rempah", price: 12000, unit: "ikat", stock: 30, description: "Sereh wangi segar dari kebun, batang besar.", image: "asset:jahe", bestBeforeDays: 14, packaging: "Diikat 10 batang", weightPerUnit: "±300 g", storageInfo: "Tempat kering." },
-    { name: "Madu Hutan Sumbawa", category: "rempah", price: 95000, unit: "botol", stock: 18, description: "Madu hutan multiflora 500 ml, asli petani lokal.", image: "asset:jahe", bestBeforeDays: 730, packaging: "Botol kaca 500 ml + segel", weightPerUnit: "500 ml", storageInfo: "Suhu ruang, jauhi sinar matahari." },
-    { name: "Telur Ayam Kampung", category: "sayur", price: 36000, unit: "kg", stock: 40, description: "Telur ayam kampung asli pakan alami.", image: "asset:bayam", bestBeforeDays: 21, packaging: "Tray karton + bantalan sekam", weightPerUnit: "1 kg (±18 butir)", storageInfo: "Kulkas." },
-    { name: "Tahu Sumedang", category: "sayur", price: 18000, unit: "pack", stock: 30, description: "Tahu Sumedang kuning gurih, isi 25 biji.", image: "asset:bayam", bestBeforeDays: 3, packaging: "Pack plastik + es gel reusable", weightPerUnit: "500 g", storageInfo: "Kulkas, segera olah." },
-    { name: "Tempe Kedelai Lokal", category: "sayur", price: 8000, unit: "pack", stock: 50, description: "Tempe kedelai non-GMO, fermentasi alami 36 jam.", image: "asset:bayam", bestBeforeDays: 4, certifications: ["Organik Indonesia"], packaging: "Daun pisang + plastik food-grade", weightPerUnit: "400 g", storageInfo: "Kulkas." },
-    { name: "Buncis Pre-Order Panen H-3", category: "sayur", price: 14000, unit: "kg", stock: 100, description: "Pre-order buncis dataran tinggi. Dipanen segar 3 hari dari sekarang.", image: "asset:bayam", bestBeforeDays: 7, packaging: "Plastik food-grade 500 g", weightPerUnit: "500 g", storageInfo: "Kulkas.", preOrder: true },
-    { name: "Jagung Manis Pre-Order", category: "sayur", price: 9000, unit: "buah", stock: 200, description: "Pre-order jagung manis hibrida. Dipanen segar pada tanggal yang dijadwalkan.", image: "asset:bayam", bestBeforeDays: 5, packaging: "Klobot asli", weightPerUnit: "±400 g per buah", storageInfo: "Kulkas.", preOrder: true },
-    { name: "Stroberi Pre-Order", category: "buah", price: 50000, unit: "pack", stock: 60, description: "Pre-order stroberi Berastagi, dipetik segar pada tanggal panen.", image: "asset:jeruk", bestBeforeDays: 5, packaging: "Tray 250 g + foam", weightPerUnit: "250 g", storageInfo: "Kulkas, konsumsi 3 hari.", preOrder: true },
   ];
-
-  // Sampai 50 produk
   const sliced = templates.slice(0, 50);
-
   return sliced.map((t, i) => {
     const farmer = approvedFarmers[i % approvedFarmers.length];
     const harvestPlanned = t.preOrder ? dayAfter(3 + (i % 4)) : undefined;

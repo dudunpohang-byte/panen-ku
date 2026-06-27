@@ -139,12 +139,17 @@ function BantuanPage() {
               <p className="font-bold">Butuh bantuan lebih lanjut?</p>
               <p className="text-sm opacity-90">Hubungi tim Panenku kapan saja</p>
             </div>
-            <button
-              onClick={() => alert("Fitur chat bantuan akan segera hadir!")}
+          <div className="flex gap-2">
+            <a
+              href="tel:+6281318182643"
               className="rounded-xl bg-white px-4 py-2 text-sm font-bold text-primary shadow active:scale-95 transition-transform"
             >
-              Chat
-            </button>
+              Telepon
+            </a>
+            <span className="rounded-xl bg-white/20 px-4 py-2 text-sm font-bold text-white shadow">
+              +62 813-1818-2643
+            </span>
+          </div>
           </div>
         </div>
 

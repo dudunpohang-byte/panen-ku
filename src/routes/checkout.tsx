@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Truck, MapPin, Wallet, Volume2, VolumeX, MapPinned } from "lucide-react";
+import { ArrowLeft, Truck, MapPin, Wallet, Volume2, VolumeX, MapPinned, Banknote, QrCode, Building2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { ProductImage } from "@/components/ProductImage";
-import { rupiah, tanggalID } from "@/lib/format";
+import { rupiah, rupiahSpoken, tanggalID, unitSpoken } from "@/lib/format";
 import {
   CITIES,
   calculateShippingOptions,
@@ -20,12 +21,15 @@ import { useStoreSubscription } from "@/hooks/use-store";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useVoiceOver } from "@/hooks/use-voice-over";
 import { toast } from "sonner";
+import { generateQrisString, saveQrisPayment } from "@/lib/payments";
 
 export const Route = createFileRoute("/checkout")({
   component: Checkout,
 });
 
 const SELECTION_KEY = "panenku.cart.selection";
+
+type PaymentMethod = "qris" | "transfer" | "cod";
 
 function Checkout() {
   const session = useSession();
@@ -39,6 +43,7 @@ function Checkout() {
   const [address, setAddress] = useState("");
   const [buyerCityId, setBuyerCityId] = useState<string>("jakarta");
   const [shipping, setShipping] = useState<ShippingMethod>("antar_sendiri");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("qris");
   const [confirmedByVoice, setConfirmedByVoice] = useState(false);
   const [selectedIds] = useState<Set<string> | null>(() => {
     if (typeof window === "undefined") return null;
@@ -88,7 +93,7 @@ function Checkout() {
 
   if (items.length === 0) {
     return (
-      <MobileShell>
+      <MobileShell hideNav>
         <Header />
         <div className="p-8 text-center">
           <p className="text-5xl">🛒</p>
@@ -101,20 +106,31 @@ function Checkout() {
 
   const buildSummaryText = () => {
     const ship = selectedQuote;
-    const pcs = items.map((it) => `${it.qty} ${it.product.unit} ${it.product.name}`).join(", ");
+    const paymentLabel = paymentMethod === "qris" ? "QRIS" : paymentMethod === "transfer" ? "Transfer Bank" : "Bayar di tempat atau COD";
+    
+    // Detail setiap barang: "5 kilogram Tomat Merah Segar, harga satuan dua belas ribu rupiah, total enam puluh ribu rupiah"
+    const itemDetails = items.map((it) => {
+      const qtySpoken = rupiahSpoken(it.qty * 1000).replace("ribu rupiah", "").replace("rupiah", "").trim() || it.qty.toString();
+      const qtyText = `${it.qty} ${unitSpoken(it.product.unit)}`;
+      const unitPriceText = rupiahSpoken(it.price);
+      const lineTotalText = rupiahSpoken(it.price * it.qty);
+      return `${qtyText} ${it.product.name}, harga satuan ${unitPriceText}, total ${lineTotalText}`;
+    }).join(". ");
+    
     return [
       `Halo ${session.name}.`,
-      `Anda akan membayar ${pcs}.`,
-      `Subtotal ${rupiah(subtotal)}.`,
+      `Anda akan membeli: ${itemDetails}.`,
+      `Subtotal ${rupiahSpoken(subtotal)}.`,
       ship?.fee
-        ? `Ongkir ${ship.label} ${rupiah(ship.fee)}.`
+        ? `Ongkos kirim ${ship.label} sebesar ${rupiahSpoken(ship.fee)}.`
         : ship
-          ? `Ongkir ${ship.label} gratis.`
+          ? `Ongkos kirim ${ship.label} gratis.`
           : "",
-      adminFee > 0 ? `Biaya layanan ${rupiah(adminFee)}.` : "",
-      `Total yang harus dibayar ${rupiah(total)}.`,
+      adminFee > 0 ? `Biaya layanan sebesar ${rupiahSpoken(adminFee)}.` : "",
+      `Total yang harus dibayar ${rupiahSpoken(total)}.`,
+      `Metode pembayaran ${paymentLabel}.`,
       `Alamat pengiriman: ${address || "belum diisi"}.`,
-      "Silakan tekan tombol bayar sekarang jika sudah benar.",
+      "Silakan tekan tombol bayar sekarang jika semua sudah benar.",
     ]
       .filter(Boolean)
       .join(" ");
@@ -131,7 +147,6 @@ function Checkout() {
     }
     const ok = speak(buildSummaryText(), () => {
       setConfirmedByVoice(true);
-      // Alert setelah suara selesai (sekitar 1 menit max)
       setTimeout(() => {
         toast.success("✅ Konfirmasi suara selesai", {
           description: "Silakan tekan Bayar Sekarang untuk lanjut.",
@@ -158,6 +173,9 @@ function Checkout() {
       });
       return;
     }
+
+    const orderId = `o_${Date.now()}`;
+
     createOrder({
       buyerId: session.id,
       buyerName: session.name,
@@ -182,8 +200,23 @@ function Checkout() {
       total,
       status: "dibayar",
       shippingMethod: shipping,
+      paymentMethod,
+      paymentProvider: paymentMethod === "cod" ? "cod" : paymentMethod === "qris" ? "xendit_qris" : "xendit_transfer",
+      paymentStatus: "pending",
     });
-    // Hanya kosongkan item yang dibeli — sisanya tetap di keranjang.
+
+    // Simpan QRIS payment jika metode pembayaran QRIS
+    if (paymentMethod === "qris") {
+      saveQrisPayment({
+        id: `qris_${Date.now()}`,
+        orderId,
+        qrisString: generateQrisString(orderId, total),
+        amount: total,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      });
+    }
+
     if (selectedIds) {
       const remaining = cart.filter((c) => !selectedIds.has(c.productId));
       setCart(session.id, remaining);
@@ -195,6 +228,20 @@ function Checkout() {
     } catch {
       // ignore
     }
+
+    // Voice over sukses bayar - sebutkan detail lengkap
+    const itemList = items.map((it) => {
+      return `${it.qty} ${unitSpoken(it.product.unit)} ${it.product.name} dengan harga total ${rupiahSpoken(it.price * it.qty)}`;
+    }).join(", ");
+    const successText = [
+      `Pembayaran berhasil!`,
+      `Total ${rupiahSpoken(total)}.`,
+      `Pesanan ${itemList} sudah tercatat.`,
+      `Alamat pengiriman ke ${address}.`,
+      "Terima kasih telah berbelanja di Panenku.",
+    ].join(" ");
+    speak(successText);
+
     toast.success("Pesanan berhasil dibuat!", { description: "Cek di menu Pesanan" });
     navigate({ to: "/pesanan" });
   };
@@ -238,16 +285,16 @@ function Checkout() {
       </section>
 
       <section className="mt-2 bg-card p-4">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
-            <MapPin className="h-5 w-5 text-primary" /> Alamat Pengiriman
-          </h2>
-          <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Contoh: Jl. Mawar No. 12, RT 03, Desa Sukamaju"
-            rows={3}
-            className="w-full resize-none rounded-xl border-2 border-border bg-background p-3 text-base outline-none focus:border-primary"
-          />
+        <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
+          <MapPin className="h-5 w-5 text-primary" /> Alamat Pengiriman
+        </h2>
+        <textarea
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="Contoh: Jl. Mawar No. 12, RT 03, Desa Sukamaju"
+          rows={3}
+          className="w-full resize-none rounded-xl border-2 border-border bg-background p-3 text-base outline-none focus:border-primary"
+        />
       </section>
 
       <section className="mt-2 bg-card p-4">
@@ -276,6 +323,66 @@ function Checkout() {
       </section>
 
       <section className="mt-2 bg-card p-4">
+        <h2 className="mb-2 text-lg font-bold">Metode Pembayaran</h2>
+        <div className="grid grid-cols-3 gap-2">
+          {([
+            { id: "qris", label: "QRIS", icon: QrCode },
+            { id: "transfer", label: "Transfer", icon: Building2 },
+            { id: "cod", label: "COD", icon: Banknote },
+          ] as const).map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => setPaymentMethod(opt.id as PaymentMethod)}
+              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 ${
+                paymentMethod === opt.id ? "border-primary bg-primary-soft" : "border-border"
+              }`}
+            >
+              <opt.icon className={`h-6 w-6 ${paymentMethod === opt.id ? "text-primary" : "text-muted-foreground"}`} />
+              <span className="text-xs font-bold">{opt.label}</span>
+            </button>
+          ))}
+        </div>
+        {paymentMethod === "qris" && (
+          <div className="mt-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft/50 p-4 text-center">
+            {total > 0 ? (
+              <>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(generateQrisString(`checkout_${Date.now()}`, total))}`}
+                  alt="QRIS Payment"
+                  className="mx-auto rounded-xl"
+                  width={200}
+                  height={200}
+                />
+                <p className="mt-2 text-sm font-bold">Scan QRIS untuk Bayar</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Scan kode QR ini dengan aplikasi e-wallet (GoPay, OVO, DANA, ShopeePay, LinkAja) atau mobile banking
+                </p>
+                <p className="mt-2 text-lg font-extrabold text-primary">{rupiah(total)}</p>
+              </>
+            ) : (
+              <>
+                <QrCode className="mx-auto h-16 w-16 text-primary" />
+                <p className="mt-2 text-sm font-bold">Bayar dengan QRIS</p>
+                <p className="text-xs text-muted-foreground">Tunjukkan kode QR di kasir saat pengiriman</p>
+              </>
+            )}
+          </div>
+        )}
+        {paymentMethod === "transfer" && (
+          <div className="mt-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft/50 p-4">
+            <p className="text-sm font-bold">Transfer ke:</p>
+            <p className="text-sm">Bank Mandiri 1234-5678-9012 a.n. Panenku</p>
+          </div>
+        )}
+        {paymentMethod === "cod" && (
+          <div className="mt-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft/50 p-4">
+            <p className="text-sm font-bold">Bayar di tempat (COD)</p>
+            <p className="text-xs text-muted-foreground">Bayar saat paket diterima</p>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-2 bg-card p-4 pb-40">
         <h2 className="mb-2 text-lg font-bold">Produk Dipesan</h2>
         <div className="space-y-2">
           {items.map((it) => (
@@ -299,27 +406,6 @@ function Checkout() {
             </div>
           ))}
         </div>
-        {items.some((it) => it.product.preOrder) && (
-          <div className="mt-3 rounded-xl border-2 border-primary/30 bg-primary-soft p-3 text-xs">
-            <p className="font-bold text-primary">ℹ️ Pesanan ini berisi produk Pre-Order</p>
-            <p className="mt-1 text-foreground">
-              Pengiriman dimulai setelah tanggal panen. Anda akan diberitahu saat petani memanen.
-            </p>
-          </div>
-        )}
-      </section>
-
-      <section className="mt-2 bg-card p-4 pb-40">
-        <h2 className="mb-2 flex items-center gap-2 text-lg font-bold">
-          <Wallet className="h-5 w-5 text-primary" /> Rincian Pembayaran
-        </h2>
-        <div className="space-y-1 text-base">
-          <Row label="Subtotal" value={rupiah(subtotal)} />
-          <Row label={`Ongkir (${selectedQuote?.label})`} value={selectedQuote?.fee === 0 ? "GRATIS" : rupiah(selectedQuote?.fee ?? 0)} />
-          <Row label={`Biaya Layanan (${settings.adminFeePercent}%)`} value={rupiah(adminFee)} />
-          <div className="my-2 border-t border-border" />
-          <Row label="Total" value={rupiah(total)} bold />
-        </div>
       </section>
 
       <div
@@ -334,15 +420,6 @@ function Checkout() {
         </button>
       </div>
     </MobileShell>
-  );
-}
-
-function Row({ label, value, bold = false }: { label: string; value: string; bold?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <span className={bold ? "text-lg font-bold" : "text-muted-foreground"}>{label}</span>
-      <span className={bold ? "text-xl font-extrabold text-primary" : "font-semibold"}>{value}</span>
-    </div>
   );
 }
 

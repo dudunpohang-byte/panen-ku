@@ -46,6 +46,13 @@ export function buildInvoiceHTML(order: Order): string {
       ? "Diantar oleh Petani"
       : "Jasa Kirim";
 
+  const paymentLabel =
+    order.paymentMethod === "qris"
+      ? "QRIS"
+      : order.paymentMethod === "transfer"
+        ? "Transfer Bank"
+        : "Bayar di Tempat (COD)";
+
   // Payload QR untuk verifikasi kurir: kompak & mudah dibaca scanner.
   const qrPayload = JSON.stringify({
     id: order.id,
@@ -113,6 +120,7 @@ export function buildInvoiceHTML(order: Order): string {
       <div class="box">
         <h2 style="margin:0 0 6px;">Pengiriman</h2>
         <strong>${escapeHtml(shippingLabel)}</strong><br/>
+        <strong>Bayar: ${escapeHtml(paymentLabel)}</strong><br/>
         Jarak: ${order.distanceKm ?? 0} km<br/>
         Tanggal: ${escapeHtml(tanggalID(order.createdAt))}
       </div>

@@ -1,31 +1,20 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Wallet, Building2, Smartphone } from "lucide-react";
+import { ArrowLeft, Wallet, Building2, Smartphone, CheckCircle2, Clock, XCircle, History, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { rupiah } from "@/lib/format";
 import { updateUser } from "@/lib/store";
 import { useSession } from "@/hooks/use-session";
 import { toast } from "sonner";
+import { EWALLET_LIST, BANK_LIST } from "@/assets/payment-logos";
+import { createWithdrawalRequest, getFarmerWithdrawals, type WithdrawalRequest } from "@/lib/payments";
 
 export const Route = createFileRoute("/petani/tarik-dana")({
   component: TarikDana,
 });
 
-const EWALLETS = [
-  { id: "dana", name: "DANA", emoji: "💙", color: "bg-blue-100 text-blue-700" },
-  { id: "ovo", name: "OVO", emoji: "🟣", color: "bg-purple-100 text-purple-700" },
-  { id: "gopay", name: "GoPay", emoji: "🟢", color: "bg-emerald-100 text-emerald-700" },
-  { id: "shopeepay", name: "ShopeePay", emoji: "🟠", color: "bg-orange-100 text-orange-700" },
-] as const;
-
-const BANKS = [
-  { id: "bca", name: "BCA", emoji: "🏦", color: "bg-blue-100 text-blue-700" },
-  { id: "mandiri", name: "Mandiri", emoji: "🏦", color: "bg-yellow-100 text-yellow-700" },
-  { id: "bri", name: "BRI", emoji: "🏦", color: "bg-indigo-100 text-indigo-700" },
-  { id: "bni", name: "BNI", emoji: "🏦", color: "bg-orange-100 text-orange-700" },
-  { id: "seabank", name: "SeaBank", emoji: "🏦", color: "bg-cyan-100 text-cyan-700" },
-  { id: "jago", name: "Bank Jago", emoji: "🏦", color: "bg-pink-100 text-pink-700" },
-] as const;
+const EWALLETS = EWALLET_LIST.map(e => ({ id: e.id, name: e.name, emoji: e.name[0], color: "bg-primary-soft text-primary" }));
+const BANKS = BANK_LIST.map(b => ({ id: b.id, name: b.name, emoji: "🏦", color: "bg-primary-soft text-primary" }));
 
 function TarikDana() {
   const session = useSession();
@@ -53,9 +42,24 @@ function TarikDana() {
     if (amt > balance) { toast.error("Saldo tidak cukup"); return; }
     if (account.length < 6) { toast.error("Mohon isi nomor rekening/HP"); return; }
     if (accountName.trim().length < 2) { toast.error("Mohon isi nama pemilik rekening"); return; }
-    updateUser({ ...session, balance: balance - amt });
-    toast.success(`Tarik ${rupiah(amt)} ke ${selectedProvider.name} berhasil!`, {
-      description: `a.n. ${accountName} · diproses 1x24 jam`,
+
+    // Buat withdrawal request yang perlu disetujui admin
+    createWithdrawalRequest({
+      farmerId: session.id,
+      farmerName: session.name,
+      farmName: session.farmName || "",
+      accountName,
+      accountNumber: account,
+      provider: selectedProvider.name,
+      providerType: method,
+      amount: amt,
+    });
+
+    // Freeze saldo (pindahkan ke pendingBalance)
+    updateUser({ ...session, balance: balance - amt, pendingBalance: pending + amt });
+
+    toast.success(`Permintaan tarik ${rupiah(amt)} ke ${selectedProvider.name} berhasil!`, {
+      description: `a.n. ${accountName} · sedang diverifikasi admin (1x24 jam)`,
     });
     navigate({ to: "/petani" });
   };

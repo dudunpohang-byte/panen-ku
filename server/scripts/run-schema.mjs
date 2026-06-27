@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url';
 const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const conn = 'postgresql://neondb_owner:npg_QYNJwHrX8z6u@ep-lingering-meadow-atprlkwr.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require';
-const pool = new Pool({ connectionString: conn, ssl: { rejectUnauthorized: false } });
+// Gunakan environment variable atau default ke local PostgreSQL
+const conn = process.env.DATABASE_URL || 'postgresql://postgres@localhost:5432/panenku';
+const pool = new Pool({ connectionString: conn });
 
 async function run() {
   const schemaPath = path.join(__dirname, '..', '..', 'db', 'schema.sql');

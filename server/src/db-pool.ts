@@ -3,20 +3,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const connectionString = process.env.DATABASE_URL || "postgresql://localhost/panenku_dev";
-
-// Deteksi apakah pakai Neon (cloud) atau lokal
-const isNeon = connectionString.includes('neon.tech');
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres@localhost:5432/panenku";
 
 export const pool = new Pool({
   connectionString,
-  max: 50,           // Maksimal 50 koneksi simultan (multi-user)
-  min: 5,            // Minimal 5 koneksi siap pakai
+  max: 50,
+  min: 5,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
   maxUses: 7500,
-  // Neon / cloud PostgreSQL require SSL
-  ...(isNeon ? { ssl: { rejectUnauthorized: false } } : {}),
 });
 
 pool.on("error", (err) => {
@@ -26,12 +21,6 @@ pool.on("error", (err) => {
 
 pool.on("connect", () => {
   console.log("New PostgreSQL connection pool client connected");
-});
-
-pool.on("acquire", () => {
-});
-
-pool.on("release", () => {
 });
 
 export async function query(text: string, params?: any[]) {

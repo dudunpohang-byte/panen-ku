@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Bell, ShoppingCart, Search } from "lucide-react";
+import { ShoppingCart, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { ProductCard } from "@/components/ProductCard";
@@ -7,6 +7,7 @@ import { ProductImage } from "@/components/ProductImage";
 import { CATEGORIES, rupiah } from "@/lib/format";
 import { getVisibleProducts, seedIfEmpty } from "@/lib/store";
 import { useStoreSubscription } from "@/hooks/use-store";
+import { NotificationBell } from "@/components/NotificationBell";
 import bannerPanen from "@/assets/banner-panen.jpg";
 import bannerOngkir from "@/assets/banner-ongkir.jpg";
 import logo from "@/assets/logo-panenku.png";
@@ -46,9 +47,7 @@ function Beranda() {
             <img src={logo} alt="Panenku" className="h-9 w-auto brightness-0 invert" width={120} height={36} />
           </span>
           <div className="flex items-center gap-2">
-            <Link to="/akun" aria-label="Notifikasi" className="rounded-full p-2 hover:bg-white/15">
-              <Bell className="h-6 w-6" />
-            </Link>
+            <NotificationBell />
             <Link to="/keranjang" aria-label="Keranjang" className="rounded-full p-2 hover:bg-white/15">
               <ShoppingCart className="h-6 w-6" />
             </Link>

@@ -5,6 +5,8 @@ import products from "./routes/products";
 import users from "./routes/users";
 import orders from "./routes/orders";
 import shipments from "./routes/shipments";
+import discounts from "./routes/discounts";
+import payments from "./routes/payments";
 
 dotenv.config();
 
@@ -24,6 +26,8 @@ app.use("/api/products", products);
 app.use("/api/users", users);
 app.use("/api/orders", orders);
 app.use("/api/shipments", shipments);
+app.use("/api/discounts", discounts);
+app.use("/api/payments", payments);
 
 app.get("/api/health", (req, res) => res.json({ ok: true, database: "neon_cloud", time: new Date().toISOString() }));
 

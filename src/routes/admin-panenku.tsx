@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ShieldCheck, Users, Settings, BarChart3, LogOut, ScrollText } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Users, Settings, BarChart3, LogOut, ScrollText, Lock, KeyRound, Wallet, Package, Percent } from "lucide-react";
 import { useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { adminLogin, logout } from "@/lib/store";
@@ -49,9 +49,13 @@ function AdminLayout() {
 
       <nav className="grid grid-cols-4 gap-2 p-3">
         <NavBtn to="/admin-panenku/verifikasi" icon={Users} label="Verifikasi" />
-        <NavBtn to="/admin-panenku/biaya" icon={Settings} label="Biaya & Ongkir" />
+        <NavBtn to="/admin-panenku/withdrawals" icon={Wallet} label="Penarikan" />
+        <NavBtn to="/admin-panenku/security" icon={Lock} label="Keamanan" />
+        <NavBtn to="/admin-panenku/biaya" icon={Settings} label="Biaya" />
         <NavBtn to="/admin-panenku/statistik" icon={BarChart3} label="Statistik" />
-        <NavBtn to="/admin-panenku/log" icon={ScrollText} label="Log Audit" />
+        <NavBtn to="/admin-panenku/log" icon={ScrollText} label="Log" />
+        <NavBtn to="/admin-panenku/diskon" icon={Percent} label="Diskon" />
+        <NavBtn to="/admin-panenku/returns" icon={Package} label="Return" />
       </nav>
 
       <Outlet />

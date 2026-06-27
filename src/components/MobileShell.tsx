@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { BottomNav } from "./BottomNav";
+import { CartReminder } from "./CartReminder";
 import { useReveal } from "@/hooks/use-reveal";
 
 export function MobileShell({
@@ -27,6 +28,7 @@ export function MobileShell({
           {children}
         </main>
         {!hideNav && <BottomNav />}
+        {!hideNav && <CartReminder />}
       </div>
     </div>
   );

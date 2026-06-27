@@ -1,113 +1,91 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ShieldCheck, Lock, Eye, Database, Trash2, Cookie } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
+import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/privasi")({
-  component: PrivasiPage,
-  head: () => ({
-    meta: [
-      { title: "Kebijakan Privasi — Panenku" },
-      { name: "description", content: "Kebijakan privasi dan perlindungan data pengguna aplikasi Panenku." },
-    ],
-  }),
+  component: PrivacyPolicy,
 });
 
-function PrivasiPage() {
+function PrivacyPolicy() {
   return (
     <MobileShell hideNav>
-      {/* Header */}
-      <header className="sticky top-0 z-30 flex items-center gap-2 bg-primary px-2 py-3 text-primary-foreground shadow-soft">
-        <Link to="/akun" aria-label="Kembali" className="rounded-full p-2 hover:bg-white/15 active:scale-95 transition-transform">
-          <ArrowLeft className="h-6 w-6" />
-        </Link>
-        <h1 className="text-xl font-bold">Kebijakan Privasi</h1>
-      </header>
+      <Header title="Kebijakan Privasi" />
+      <div className="p-4 space-y-4 text-sm leading-relaxed">
+        <section>
+          <h2 className="text-lg font-bold mb-2">1. Informasi yang Kami Kumpulkan</h2>
+          <p>Panenku mengumpulkan informasi berikut saat Anda menggunakan aplikasi:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>Nama lengkap dan nomor telepon</li>
+            <li>Alamat pengiriman</li>
+            <li>Data lokasi (kota/kabupaten) untuk kalkulasi ongkir</li>
+            <li>Riwayat pesanan dan preferensi belanja</li>
+            <li>Informasi perangkat dan browser</li>
+          </ul>
+        </section>
 
-      <main className="p-4 space-y-4 page-transition">
-        {/* Intro card */}
-        <div className="rounded-2xl bg-card p-5 shadow-card text-center reveal is-visible">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-soft text-primary mb-3">
-            <ShieldCheck className="h-8 w-8" />
-          </div>
-          <h2 className="text-lg font-bold">Privasi Anda Prioritas Kami</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Terakhir diperbarui: 1 Januari 2025
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Panenku berkomitmen melindungi data pribadi pengguna sesuai regulasi yang berlaku di Indonesia.
-          </p>
-        </div>
+        <section>
+          <h2 className="text-lg font-bold mb-2">2. Penggunaan Informasi</h2>
+          <p>Informasi Anda digunakan untuk:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>Memproses dan mengirimkan pesanan</li>
+            <li>Menghitung biaya pengiriman</li>
+            <li>Memberikan notifikasi status pesanan</li>
+            <li>Meningkatkan kualitas layanan</li>
+            <li>Customer support</li>
+          </ul>
+        </section>
 
-        {/* Sections */}
-        <div className="space-y-3">
-          <PrivacyCard
-            icon={Database}
-            title="Data yang Kami Kumpulkan"
-            content="Kami mengumpulkan nama, nomor telepon, lokasi kebun (untuk petani), foto profil, riwayat transaksi, dan preferensi aplikasi. Data ini digunakan untuk operasional marketplace dan verifikasi identitas."
-            delay={1}
-          />
-          <PrivacyCard
-            icon={Eye}
-            title="Penggunaan Data"
-            content="Data Anda digunakan untuk: memproses pesanan, verifikasi petani, komunikasi antar pengguna, rekomendasi produk, peningkatan layanan, dan keamanan platform. Kami tidak menjual data pribadi kepada pihak ketiga."
-            delay={2}
-          />
-          <PrivacyCard
-            icon={Lock}
-            title="Keamanan Data"
-            content="Kami mengimplementasikan enkripsi, autentikasi aman, dan kontrol akses ketat. Password disimpan dengan hashing modern. Transmisi data dilindungi dengan protokol keamanan standar industri."
-            delay={3}
-          />
-          <PrivacyCard
-            icon={Cookie}
-            title="Cookies & Tracking"
-            content="Panenku menggunakan teknologi penyimpanan lokal untuk mengingat preferensi Anda dan meningkatkan pengalaman pengguna. Anda dapat mengatur preferensi ini melalui pengaturan perangkat."
-            delay={4}
-          />
-          <PrivacyCard
-            icon={Trash2}
-            title="Penghapusan Data"
-            content="Pengguna dapat meminta penghapusan akun dan data pribadi kapan saja melalui layanan bantuan. Penghapusan akan diproses dalam waktu maksimal 30 hari kerja setelah verifikasi identitas."
-            delay={5}
-          />
-        </div>
+        <section>
+          <h2 className="text-lg font-bold mb-2">3. Keamanan Data</h2>
+          <p>Kami melindungi data Anda dengan:</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>Enkripsi data dalam penyimpanan lokal</li>
+            <li>Koneksi HTTPS untuk semua komunikasi</li>
+            <li>Akses terbatas berdasarkan peran (buyer/farmer/admin)</li>
+            <li>Tidak membagikan data pribadi ke pihak ketiga tanpa izin</li>
+          </ul>
+        </section>
 
-        {/* Footer note */}
-        <div className="rounded-2xl border border-border bg-muted/40 p-4 text-center text-sm text-muted-foreground mt-4">
-          Ada pertanyaan soal privasi? Kunjungi{" "}
-          <Link to="/bantuan" className="font-semibold text-primary">Bantuan</Link>{" "}
-          atau hubungi tim Panenku.
-        </div>
-      </main>
+        <section>
+          <h2 className="text-lg font-bold mb-2">4. Penyimpanan Lokal</h2>
+          <p>Aplikasi Panenku menyimpan data di localStorage browser Anda untuk pengalaman offline. Data ini meliputi: profil pengguna, keranjang belanja, dan riwayat pesanan. Anda dapat menghapus data ini kapan saja melalui pengaturan browser.</p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold mb-2">5. Cookie & Tracking</h2>
+          <p>Kami tidak menggunakan cookie tracking pihak ketiga. Data sesi disimpan untuk pengalaman login yang lebih baik.</p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold mb-2">6. Hak Anda</h2>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>Mengakses data pribadi Anda</li>
+            <li>Memperbaiki data yang tidak akurat</li>
+            <li>Menghapus akun dan data Anda</li>
+            <li>Menolak pengumpulan data tertentu</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold mb-2">7. Kontak</h2>
+          <p>Jika ada pertanyaan tentang kebijakan privasi, hubungi kami di:</p>
+          <p className="mt-1 font-semibold">Email: support@panenku.app</p>
+          <p className="font-semibold">WhatsApp: +62 812-0000-0001</p>
+        </section>
+
+        <p className="mt-6 text-xs text-muted-foreground">Terakhir diperbarui: 22 Juni 2026</p>
+      </div>
     </MobileShell>
   );
 }
 
-function PrivacyCard({
-  icon: Icon,
-  title,
-  content,
-  delay,
-}: {
-  icon: typeof ShieldCheck;
-  title: string;
-  content: string;
-  delay: number;
-}) {
+function Header({ title }: { title: string }) {
   return (
-    <div
-      className="reveal is-visible rounded-2xl bg-card p-4 shadow-card"
-      style={{ animationDelay: `${delay * 80}ms` }}
-    >
-      <div className="flex items-center gap-3 mb-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-          <Icon className="h-5 w-5" />
-        </div>
-        <h3 className="text-base font-bold">{title}</h3>
-      </div>
-      <p className="text-[15px] leading-relaxed text-muted-foreground pl-[52px]">
-        {content}
-      </p>
-    </div>
+    <header className="sticky top-0 z-30 flex items-center gap-2 bg-primary px-2 py-3 text-primary-foreground">
+      <Link to="/" aria-label="Beranda" className="rounded-full p-2 hover:bg-white/15">
+        <ArrowLeft className="h-6 w-6" />
+      </Link>
+      <h1 className="text-xl font-bold">{title}</h1>
+    </header>
   );
 }

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SyaratRouteImport } from './routes/syarat'
 import { Route as PrivasiRouteImport } from './routes/privasi'
 import { Route as PesananRouteImport } from './routes/pesanan'
+import { Route as NotifikasiRouteImport } from './routes/notifikasi'
 import { Route as MasukRouteImport } from './routes/masuk'
 import { Route as KeranjangRouteImport } from './routes/keranjang'
 import { Route as DaftarRouteImport } from './routes/daftar'
@@ -32,12 +33,20 @@ import { Route as PetaniTambahProdukRouteImport } from './routes/petani.tambah-p
 import { Route as PetaniSertifikatRouteImport } from './routes/petani.sertifikat'
 import { Route as PetaniProdukRouteImport } from './routes/petani.produk'
 import { Route as PetaniEdukasiRouteImport } from './routes/petani.edukasi'
+import { Route as PetaniDiskonRouteImport } from './routes/petani.diskon'
+import { Route as PetaniBeliRouteImport } from './routes/petani.beli'
+import { Route as PesananIdRouteImport } from './routes/pesanan.$id'
 import { Route as ChatRoomIdRouteImport } from './routes/chat.$roomId'
+import { Route as AdminPanenkuWithdrawalsRouteImport } from './routes/admin-panenku.withdrawals'
 import { Route as AdminPanenkuVerifikasiRouteImport } from './routes/admin-panenku.verifikasi'
 import { Route as AdminPanenkuStatistikRouteImport } from './routes/admin-panenku.statistik'
+import { Route as AdminPanenkuSecurityRouteImport } from './routes/admin-panenku.security'
+import { Route as AdminPanenkuReturnsRouteImport } from './routes/admin-panenku.returns'
 import { Route as AdminPanenkuLogRouteImport } from './routes/admin-panenku.log'
+import { Route as AdminPanenkuDiskonRouteImport } from './routes/admin-panenku.diskon'
 import { Route as AdminPanenkuBiayaRouteImport } from './routes/admin-panenku.biaya'
 import { Route as PetaniProdukIdRouteImport } from './routes/petani.produk.$id'
+import { Route as PesananIdScanConfirmRouteImport } from './routes/pesanan.$id.scan-confirm'
 
 const SyaratRoute = SyaratRouteImport.update({
   id: '/syarat',
@@ -52,6 +61,11 @@ const PrivasiRoute = PrivasiRouteImport.update({
 const PesananRoute = PesananRouteImport.update({
   id: '/pesanan',
   path: '/pesanan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotifikasiRoute = NotifikasiRouteImport.update({
+  id: '/notifikasi',
+  path: '/notifikasi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MasukRoute = MasukRouteImport.update({
@@ -154,10 +168,30 @@ const PetaniEdukasiRoute = PetaniEdukasiRouteImport.update({
   path: '/petani/edukasi',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PetaniDiskonRoute = PetaniDiskonRouteImport.update({
+  id: '/petani/diskon',
+  path: '/petani/diskon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PetaniBeliRoute = PetaniBeliRouteImport.update({
+  id: '/petani/beli',
+  path: '/petani/beli',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PesananIdRoute = PesananIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PesananRoute,
+} as any)
 const ChatRoomIdRoute = ChatRoomIdRouteImport.update({
   id: '/chat/$roomId',
   path: '/chat/$roomId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPanenkuWithdrawalsRoute = AdminPanenkuWithdrawalsRouteImport.update({
+  id: '/withdrawals',
+  path: '/withdrawals',
+  getParentRoute: () => AdminPanenkuRoute,
 } as any)
 const AdminPanenkuVerifikasiRoute = AdminPanenkuVerifikasiRouteImport.update({
   id: '/verifikasi',
@@ -169,9 +203,24 @@ const AdminPanenkuStatistikRoute = AdminPanenkuStatistikRouteImport.update({
   path: '/statistik',
   getParentRoute: () => AdminPanenkuRoute,
 } as any)
+const AdminPanenkuSecurityRoute = AdminPanenkuSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AdminPanenkuRoute,
+} as any)
+const AdminPanenkuReturnsRoute = AdminPanenkuReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => AdminPanenkuRoute,
+} as any)
 const AdminPanenkuLogRoute = AdminPanenkuLogRouteImport.update({
   id: '/log',
   path: '/log',
+  getParentRoute: () => AdminPanenkuRoute,
+} as any)
+const AdminPanenkuDiskonRoute = AdminPanenkuDiskonRouteImport.update({
+  id: '/diskon',
+  path: '/diskon',
   getParentRoute: () => AdminPanenkuRoute,
 } as any)
 const AdminPanenkuBiayaRoute = AdminPanenkuBiayaRouteImport.update({
@@ -183,6 +232,11 @@ const PetaniProdukIdRoute = PetaniProdukIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => PetaniProdukRoute,
+} as any)
+const PesananIdScanConfirmRoute = PesananIdScanConfirmRouteImport.update({
+  id: '/scan-confirm',
+  path: '/scan-confirm',
+  getParentRoute: () => PesananIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -196,14 +250,22 @@ export interface FileRoutesByFullPath {
   '/daftar': typeof DaftarRoute
   '/keranjang': typeof KeranjangRoute
   '/masuk': typeof MasukRoute
-  '/pesanan': typeof PesananRoute
+  '/notifikasi': typeof NotifikasiRoute
+  '/pesanan': typeof PesananRouteWithChildren
   '/privasi': typeof PrivasiRoute
   '/syarat': typeof SyaratRoute
   '/admin-panenku/biaya': typeof AdminPanenkuBiayaRoute
+  '/admin-panenku/diskon': typeof AdminPanenkuDiskonRoute
   '/admin-panenku/log': typeof AdminPanenkuLogRoute
+  '/admin-panenku/returns': typeof AdminPanenkuReturnsRoute
+  '/admin-panenku/security': typeof AdminPanenkuSecurityRoute
   '/admin-panenku/statistik': typeof AdminPanenkuStatistikRoute
   '/admin-panenku/verifikasi': typeof AdminPanenkuVerifikasiRoute
+  '/admin-panenku/withdrawals': typeof AdminPanenkuWithdrawalsRoute
   '/chat/$roomId': typeof ChatRoomIdRoute
+  '/pesanan/$id': typeof PesananIdRouteWithChildren
+  '/petani/beli': typeof PetaniBeliRoute
+  '/petani/diskon': typeof PetaniDiskonRoute
   '/petani/edukasi': typeof PetaniEdukasiRoute
   '/petani/produk': typeof PetaniProdukRouteWithChildren
   '/petani/sertifikat': typeof PetaniSertifikatRoute
@@ -214,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/admin-panenku/': typeof AdminPanenkuIndexRoute
   '/chat/': typeof ChatIndexRoute
   '/petani/': typeof PetaniIndexRoute
+  '/pesanan/$id/scan-confirm': typeof PesananIdScanConfirmRoute
   '/petani/produk/$id': typeof PetaniProdukIdRoute
 }
 export interface FileRoutesByTo {
@@ -226,14 +289,22 @@ export interface FileRoutesByTo {
   '/daftar': typeof DaftarRoute
   '/keranjang': typeof KeranjangRoute
   '/masuk': typeof MasukRoute
-  '/pesanan': typeof PesananRoute
+  '/notifikasi': typeof NotifikasiRoute
+  '/pesanan': typeof PesananRouteWithChildren
   '/privasi': typeof PrivasiRoute
   '/syarat': typeof SyaratRoute
   '/admin-panenku/biaya': typeof AdminPanenkuBiayaRoute
+  '/admin-panenku/diskon': typeof AdminPanenkuDiskonRoute
   '/admin-panenku/log': typeof AdminPanenkuLogRoute
+  '/admin-panenku/returns': typeof AdminPanenkuReturnsRoute
+  '/admin-panenku/security': typeof AdminPanenkuSecurityRoute
   '/admin-panenku/statistik': typeof AdminPanenkuStatistikRoute
   '/admin-panenku/verifikasi': typeof AdminPanenkuVerifikasiRoute
+  '/admin-panenku/withdrawals': typeof AdminPanenkuWithdrawalsRoute
   '/chat/$roomId': typeof ChatRoomIdRoute
+  '/pesanan/$id': typeof PesananIdRouteWithChildren
+  '/petani/beli': typeof PetaniBeliRoute
+  '/petani/diskon': typeof PetaniDiskonRoute
   '/petani/edukasi': typeof PetaniEdukasiRoute
   '/petani/produk': typeof PetaniProdukRouteWithChildren
   '/petani/sertifikat': typeof PetaniSertifikatRoute
@@ -244,6 +315,7 @@ export interface FileRoutesByTo {
   '/admin-panenku': typeof AdminPanenkuIndexRoute
   '/chat': typeof ChatIndexRoute
   '/petani': typeof PetaniIndexRoute
+  '/pesanan/$id/scan-confirm': typeof PesananIdScanConfirmRoute
   '/petani/produk/$id': typeof PetaniProdukIdRoute
 }
 export interface FileRoutesById {
@@ -258,14 +330,22 @@ export interface FileRoutesById {
   '/daftar': typeof DaftarRoute
   '/keranjang': typeof KeranjangRoute
   '/masuk': typeof MasukRoute
-  '/pesanan': typeof PesananRoute
+  '/notifikasi': typeof NotifikasiRoute
+  '/pesanan': typeof PesananRouteWithChildren
   '/privasi': typeof PrivasiRoute
   '/syarat': typeof SyaratRoute
   '/admin-panenku/biaya': typeof AdminPanenkuBiayaRoute
+  '/admin-panenku/diskon': typeof AdminPanenkuDiskonRoute
   '/admin-panenku/log': typeof AdminPanenkuLogRoute
+  '/admin-panenku/returns': typeof AdminPanenkuReturnsRoute
+  '/admin-panenku/security': typeof AdminPanenkuSecurityRoute
   '/admin-panenku/statistik': typeof AdminPanenkuStatistikRoute
   '/admin-panenku/verifikasi': typeof AdminPanenkuVerifikasiRoute
+  '/admin-panenku/withdrawals': typeof AdminPanenkuWithdrawalsRoute
   '/chat/$roomId': typeof ChatRoomIdRoute
+  '/pesanan/$id': typeof PesananIdRouteWithChildren
+  '/petani/beli': typeof PetaniBeliRoute
+  '/petani/diskon': typeof PetaniDiskonRoute
   '/petani/edukasi': typeof PetaniEdukasiRoute
   '/petani/produk': typeof PetaniProdukRouteWithChildren
   '/petani/sertifikat': typeof PetaniSertifikatRoute
@@ -276,6 +356,7 @@ export interface FileRoutesById {
   '/admin-panenku/': typeof AdminPanenkuIndexRoute
   '/chat/': typeof ChatIndexRoute
   '/petani/': typeof PetaniIndexRoute
+  '/pesanan/$id/scan-confirm': typeof PesananIdScanConfirmRoute
   '/petani/produk/$id': typeof PetaniProdukIdRoute
 }
 export interface FileRouteTypes {
@@ -291,14 +372,22 @@ export interface FileRouteTypes {
     | '/daftar'
     | '/keranjang'
     | '/masuk'
+    | '/notifikasi'
     | '/pesanan'
     | '/privasi'
     | '/syarat'
     | '/admin-panenku/biaya'
+    | '/admin-panenku/diskon'
     | '/admin-panenku/log'
+    | '/admin-panenku/returns'
+    | '/admin-panenku/security'
     | '/admin-panenku/statistik'
     | '/admin-panenku/verifikasi'
+    | '/admin-panenku/withdrawals'
     | '/chat/$roomId'
+    | '/pesanan/$id'
+    | '/petani/beli'
+    | '/petani/diskon'
     | '/petani/edukasi'
     | '/petani/produk'
     | '/petani/sertifikat'
@@ -309,6 +398,7 @@ export interface FileRouteTypes {
     | '/admin-panenku/'
     | '/chat/'
     | '/petani/'
+    | '/pesanan/$id/scan-confirm'
     | '/petani/produk/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -321,14 +411,22 @@ export interface FileRouteTypes {
     | '/daftar'
     | '/keranjang'
     | '/masuk'
+    | '/notifikasi'
     | '/pesanan'
     | '/privasi'
     | '/syarat'
     | '/admin-panenku/biaya'
+    | '/admin-panenku/diskon'
     | '/admin-panenku/log'
+    | '/admin-panenku/returns'
+    | '/admin-panenku/security'
     | '/admin-panenku/statistik'
     | '/admin-panenku/verifikasi'
+    | '/admin-panenku/withdrawals'
     | '/chat/$roomId'
+    | '/pesanan/$id'
+    | '/petani/beli'
+    | '/petani/diskon'
     | '/petani/edukasi'
     | '/petani/produk'
     | '/petani/sertifikat'
@@ -339,6 +437,7 @@ export interface FileRouteTypes {
     | '/admin-panenku'
     | '/chat'
     | '/petani'
+    | '/pesanan/$id/scan-confirm'
     | '/petani/produk/$id'
   id:
     | '__root__'
@@ -352,14 +451,22 @@ export interface FileRouteTypes {
     | '/daftar'
     | '/keranjang'
     | '/masuk'
+    | '/notifikasi'
     | '/pesanan'
     | '/privasi'
     | '/syarat'
     | '/admin-panenku/biaya'
+    | '/admin-panenku/diskon'
     | '/admin-panenku/log'
+    | '/admin-panenku/returns'
+    | '/admin-panenku/security'
     | '/admin-panenku/statistik'
     | '/admin-panenku/verifikasi'
+    | '/admin-panenku/withdrawals'
     | '/chat/$roomId'
+    | '/pesanan/$id'
+    | '/petani/beli'
+    | '/petani/diskon'
     | '/petani/edukasi'
     | '/petani/produk'
     | '/petani/sertifikat'
@@ -370,6 +477,7 @@ export interface FileRouteTypes {
     | '/admin-panenku/'
     | '/chat/'
     | '/petani/'
+    | '/pesanan/$id/scan-confirm'
     | '/petani/produk/$id'
   fileRoutesById: FileRoutesById
 }
@@ -384,10 +492,13 @@ export interface RootRouteChildren {
   DaftarRoute: typeof DaftarRoute
   KeranjangRoute: typeof KeranjangRoute
   MasukRoute: typeof MasukRoute
-  PesananRoute: typeof PesananRoute
+  NotifikasiRoute: typeof NotifikasiRoute
+  PesananRoute: typeof PesananRouteWithChildren
   PrivasiRoute: typeof PrivasiRoute
   SyaratRoute: typeof SyaratRoute
   ChatRoomIdRoute: typeof ChatRoomIdRoute
+  PetaniBeliRoute: typeof PetaniBeliRoute
+  PetaniDiskonRoute: typeof PetaniDiskonRoute
   PetaniEdukasiRoute: typeof PetaniEdukasiRoute
   PetaniProdukRoute: typeof PetaniProdukRouteWithChildren
   PetaniSertifikatRoute: typeof PetaniSertifikatRoute
@@ -420,6 +531,13 @@ declare module '@tanstack/react-router' {
       path: '/pesanan'
       fullPath: '/pesanan'
       preLoaderRoute: typeof PesananRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifikasi': {
+      id: '/notifikasi'
+      path: '/notifikasi'
+      fullPath: '/notifikasi'
+      preLoaderRoute: typeof NotifikasiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/masuk': {
@@ -562,12 +680,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PetaniEdukasiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/petani/diskon': {
+      id: '/petani/diskon'
+      path: '/petani/diskon'
+      fullPath: '/petani/diskon'
+      preLoaderRoute: typeof PetaniDiskonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/petani/beli': {
+      id: '/petani/beli'
+      path: '/petani/beli'
+      fullPath: '/petani/beli'
+      preLoaderRoute: typeof PetaniBeliRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pesanan/$id': {
+      id: '/pesanan/$id'
+      path: '/$id'
+      fullPath: '/pesanan/$id'
+      preLoaderRoute: typeof PesananIdRouteImport
+      parentRoute: typeof PesananRoute
+    }
     '/chat/$roomId': {
       id: '/chat/$roomId'
       path: '/chat/$roomId'
       fullPath: '/chat/$roomId'
       preLoaderRoute: typeof ChatRoomIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin-panenku/withdrawals': {
+      id: '/admin-panenku/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/admin-panenku/withdrawals'
+      preLoaderRoute: typeof AdminPanenkuWithdrawalsRouteImport
+      parentRoute: typeof AdminPanenkuRoute
     }
     '/admin-panenku/verifikasi': {
       id: '/admin-panenku/verifikasi'
@@ -583,11 +729,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPanenkuStatistikRouteImport
       parentRoute: typeof AdminPanenkuRoute
     }
+    '/admin-panenku/security': {
+      id: '/admin-panenku/security'
+      path: '/security'
+      fullPath: '/admin-panenku/security'
+      preLoaderRoute: typeof AdminPanenkuSecurityRouteImport
+      parentRoute: typeof AdminPanenkuRoute
+    }
+    '/admin-panenku/returns': {
+      id: '/admin-panenku/returns'
+      path: '/returns'
+      fullPath: '/admin-panenku/returns'
+      preLoaderRoute: typeof AdminPanenkuReturnsRouteImport
+      parentRoute: typeof AdminPanenkuRoute
+    }
     '/admin-panenku/log': {
       id: '/admin-panenku/log'
       path: '/log'
       fullPath: '/admin-panenku/log'
       preLoaderRoute: typeof AdminPanenkuLogRouteImport
+      parentRoute: typeof AdminPanenkuRoute
+    }
+    '/admin-panenku/diskon': {
+      id: '/admin-panenku/diskon'
+      path: '/diskon'
+      fullPath: '/admin-panenku/diskon'
+      preLoaderRoute: typeof AdminPanenkuDiskonRouteImport
       parentRoute: typeof AdminPanenkuRoute
     }
     '/admin-panenku/biaya': {
@@ -604,28 +771,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PetaniProdukIdRouteImport
       parentRoute: typeof PetaniProdukRoute
     }
+    '/pesanan/$id/scan-confirm': {
+      id: '/pesanan/$id/scan-confirm'
+      path: '/scan-confirm'
+      fullPath: '/pesanan/$id/scan-confirm'
+      preLoaderRoute: typeof PesananIdScanConfirmRouteImport
+      parentRoute: typeof PesananIdRoute
+    }
   }
 }
 
 interface AdminPanenkuRouteChildren {
   AdminPanenkuBiayaRoute: typeof AdminPanenkuBiayaRoute
+  AdminPanenkuDiskonRoute: typeof AdminPanenkuDiskonRoute
   AdminPanenkuLogRoute: typeof AdminPanenkuLogRoute
+  AdminPanenkuReturnsRoute: typeof AdminPanenkuReturnsRoute
+  AdminPanenkuSecurityRoute: typeof AdminPanenkuSecurityRoute
   AdminPanenkuStatistikRoute: typeof AdminPanenkuStatistikRoute
   AdminPanenkuVerifikasiRoute: typeof AdminPanenkuVerifikasiRoute
+  AdminPanenkuWithdrawalsRoute: typeof AdminPanenkuWithdrawalsRoute
   AdminPanenkuIndexRoute: typeof AdminPanenkuIndexRoute
 }
 
 const AdminPanenkuRouteChildren: AdminPanenkuRouteChildren = {
   AdminPanenkuBiayaRoute: AdminPanenkuBiayaRoute,
+  AdminPanenkuDiskonRoute: AdminPanenkuDiskonRoute,
   AdminPanenkuLogRoute: AdminPanenkuLogRoute,
+  AdminPanenkuReturnsRoute: AdminPanenkuReturnsRoute,
+  AdminPanenkuSecurityRoute: AdminPanenkuSecurityRoute,
   AdminPanenkuStatistikRoute: AdminPanenkuStatistikRoute,
   AdminPanenkuVerifikasiRoute: AdminPanenkuVerifikasiRoute,
+  AdminPanenkuWithdrawalsRoute: AdminPanenkuWithdrawalsRoute,
   AdminPanenkuIndexRoute: AdminPanenkuIndexRoute,
 }
 
 const AdminPanenkuRouteWithChildren = AdminPanenkuRoute._addFileChildren(
   AdminPanenkuRouteChildren,
 )
+
+interface PesananIdRouteChildren {
+  PesananIdScanConfirmRoute: typeof PesananIdScanConfirmRoute
+}
+
+const PesananIdRouteChildren: PesananIdRouteChildren = {
+  PesananIdScanConfirmRoute: PesananIdScanConfirmRoute,
+}
+
+const PesananIdRouteWithChildren = PesananIdRoute._addFileChildren(
+  PesananIdRouteChildren,
+)
+
+interface PesananRouteChildren {
+  PesananIdRoute: typeof PesananIdRouteWithChildren
+}
+
+const PesananRouteChildren: PesananRouteChildren = {
+  PesananIdRoute: PesananIdRouteWithChildren,
+}
+
+const PesananRouteWithChildren =
+  PesananRoute._addFileChildren(PesananRouteChildren)
 
 interface PetaniProdukRouteChildren {
   PetaniProdukIdRoute: typeof PetaniProdukIdRoute
@@ -650,10 +855,13 @@ const rootRouteChildren: RootRouteChildren = {
   DaftarRoute: DaftarRoute,
   KeranjangRoute: KeranjangRoute,
   MasukRoute: MasukRoute,
-  PesananRoute: PesananRoute,
+  NotifikasiRoute: NotifikasiRoute,
+  PesananRoute: PesananRouteWithChildren,
   PrivasiRoute: PrivasiRoute,
   SyaratRoute: SyaratRoute,
   ChatRoomIdRoute: ChatRoomIdRoute,
+  PetaniBeliRoute: PetaniBeliRoute,
+  PetaniDiskonRoute: PetaniDiskonRoute,
   PetaniEdukasiRoute: PetaniEdukasiRoute,
   PetaniProdukRoute: PetaniProdukRouteWithChildren,
   PetaniSertifikatRoute: PetaniSertifikatRoute,

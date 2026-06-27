@@ -14,6 +14,8 @@ import {
   MessageSquare,
   Edit,
   Award,
+  Percent,
+  ShoppingCart,
 } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
 import { ProductImage } from "@/components/ProductImage";
@@ -202,6 +204,8 @@ function PetaniDashboard() {
           <Shortcut to="/petani/edukasi" icon={BookOpen} label="Edukasi" />
           <Shortcut to="/pesanan" icon={ShoppingBag} label="Pesanan" />
           <Shortcut to="/chat" icon={MessageSquare} label="Chat" />
+          <Shortcut to="/petani/beli" icon={ShoppingCart} label="Beli" />
+          <Shortcut to="/petani/diskon" icon={Percent} label="Diskon" />
         </div>
       </section>
 

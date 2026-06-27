@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Truck, Camera, User, CheckCircle, Clock, Package } from "lucide-react";
 import { useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { MultiImagePicker } from "@/components/MultiImagePicker";
 import { CATEGORIES } from "@/lib/format";
-import { addProduct } from "@/lib/store";
+import { addProduct, type ShippingOption } from "@/lib/store";
 import { useSession } from "@/hooks/use-session";
 import { toast } from "sonner";
 
@@ -23,9 +23,16 @@ function TambahProduk() {
   const [unit, setUnit] = useState("kg");
   const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
-  const [harvestDate, setHarvestDate] = useState("");
+
+  // === SHIPPING OPTIONS ===
+  const [shippingOption, setShippingOption] = useState<ShippingOption>("diantar_petani");
+  const [shippingProofPhoto, setShippingProofPhoto] = useState(true);
+  const [estimatedDelivery, setEstimatedDelivery] = useState("1-2 jam");
+  const [courierName, setCourierName] = useState("");
+  const [deliveryChecklist, setDeliveryChecklist] = useState(false);
+
+  // === OPTIONAL DETAILS ===
   const [preOrder, setPreOrder] = useState(false);
-  const [harvestPlannedDate, setHarvestPlannedDate] = useState("");
   const [cultivationMethod, setCultivationMethod] = useState("");
   const [packaging, setPackaging] = useState("");
   const [weightPerUnit, setWeightPerUnit] = useState("");
@@ -54,9 +61,17 @@ function TambahProduk() {
       description,
       image: mainPhoto ?? `emoji:${emoji}`,
       images: rest.length ? rest : undefined,
-      harvestDate: harvestDate || undefined,
+      // === NEW FIELDS ===
+      shippingOption,
+      shippingProofPhoto,
+      estimatedDelivery: estimatedDelivery || undefined,
+      courierName: shippingOption === "diantar_petani" ? (courierName || undefined) : undefined,
+      deliveryChecklist,
+      // === PRE-ORDER (coming soon) ===
       preOrder: preOrder || undefined,
-      harvestPlannedDate: preOrder ? (harvestPlannedDate || undefined) : undefined,
+      harvestDate: undefined, // REMOVED: tanggal panen dihilangkan
+      harvestPlannedDate: undefined, // REMOVED: tanggal panen dihilangkan
+      // === OPTIONAL DETAILS ===
       cultivationMethod: cultivationMethod || undefined,
       packaging: packaging || undefined,
       weightPerUnit: weightPerUnit || undefined,
@@ -75,8 +90,7 @@ function TambahProduk() {
     name.length >= 2 &&
     Number(price) > 0 &&
     Number(stock) > 0 &&
-    description.length >= 5 &&
-    (!preOrder || !!harvestPlannedDate);
+    description.length >= 5;
 
   return (
     <MobileShell hideNav>
@@ -143,6 +157,7 @@ function TambahProduk() {
               <option value="ikat">ikat</option>
               <option value="buah">buah</option>
               <option value="sisir">sisir</option>
+              <option value="pack">pack</option>
             </select>
           </div>
         </div>
@@ -161,60 +176,112 @@ function TambahProduk() {
           />
         </div>
 
-        <div>
-          <label className="mb-1 block text-sm font-bold">Tanggal Panen (opsional)</label>
-          <input
-            type="date"
-            value={harvestDate}
-            onChange={(e) => setHarvestDate(e.target.value)}
-            className="h-14 w-full rounded-xl border-2 border-border bg-background px-4 text-base outline-none focus:border-primary"
-          />
-        </div>
+        {/* ===== SHIPPING OPTIONS ===== */}
+        <div className="rounded-xl border-2 border-primary/30 p-4 space-y-4">
+          <h2 className="text-base font-bold text-primary flex items-center gap-2">
+            <Truck className="h-5 w-5" /> Ketentuan Pengiriman
+          </h2>
 
-        <div className="flex items-start gap-3 rounded-xl border-2 border-primary/20 bg-primary-soft p-4">
-          <span className="text-2xl">🚜</span>
+          {/* Pilih opsi pengiriman */}
           <div>
-            <p className="text-base font-bold text-primary">Diantar oleh Petani</p>
-            <p className="text-sm text-muted-foreground">
-              Pesanan akan diantar langsung oleh petani ke alamat pembeli. Tidak ada opsi ambil di kebun.
-            </p>
+            <label className="mb-2 block text-sm font-bold">Metode Pengiriman</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setShippingOption("diantar_petani")}
+                className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 ${
+                  shippingOption === "diantar_petani" ? "border-primary bg-primary-soft" : "border-border"
+                }`}
+              >
+                <Truck className={`h-8 w-8 ${shippingOption === "diantar_petani" ? "text-primary" : "text-muted-foreground"}`} />
+                <span className="text-sm font-bold">Diantar Petani</span>
+                <span className="text-xs text-muted-foreground">Fee Rp2.500/5kg (rugi petani)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShippingOption("pihak_ketiga")}
+                className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 ${
+                  shippingOption === "pihak_ketiga" ? "border-primary bg-primary-soft" : "border-border"
+                }`}
+              >
+                <Package className={`h-8 w-8 ${shippingOption === "pihak_ketiga" ? "text-primary" : "text-muted-foreground"}`} />
+                <span className="text-sm font-bold">Pihak Ketiga</span>
+                <span className="text-xs text-muted-foreground">Fee Rp1.500/5kg (rugi admin)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Jika diantar petani: nama pengirim */}
+          {shippingOption === "diantar_petani" && (
+            <Field
+              label="Nama Pengirim (yang mengantar)"
+              value={courierName}
+              onChange={setCourierName}
+              placeholder="Nama Anda / staf yang mengantar"
+              icon={<User className="h-4 w-4 text-muted-foreground" />}
+            />
+          )}
+
+          {/* Perkiraan Sampai */}
+          <div>
+            <label className="mb-1 block text-sm font-bold flex items-center gap-1">
+              <Clock className="h-4 w-4" /> Perkiraan Waktu Sampai
+            </label>
+            <select
+              value={estimatedDelivery}
+              onChange={(e) => setEstimatedDelivery(e.target.value)}
+              className="h-14 w-full rounded-xl border-2 border-border bg-background px-3 text-base outline-none focus:border-primary"
+            >
+              <option value="30 menit - 1 jam">30 menit - 1 jam</option>
+              <option value="1-2 jam">1-2 jam</option>
+              <option value="2-4 jam">2-4 jam</option>
+              <option value="H+1">H+1 (keesokan hari)</option>
+              <option value="H+2">H+2</option>
+              <option value="1-3 hari">1-3 hari</option>
+            </select>
+          </div>
+
+          {/* Checklist & Foto */}
+          <div className="space-y-3 rounded-xl border border-border p-3">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={shippingProofPhoto}
+                onChange={(e) => setShippingProofPhoto(e.target.checked)}
+                className="mt-1 h-5 w-5 accent-primary"
+              />
+              <span className="flex items-center gap-1 text-sm">
+                <Camera className="h-4 w-4 text-primary" /> 
+                Wajib memfoto barang saat dikirim (untuk jaminan)
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={deliveryChecklist}
+                onChange={(e) => setDeliveryChecklist(e.target.checked)}
+                className="mt-1 h-5 w-5 accent-primary"
+              />
+              <span className="flex items-center gap-1 text-sm">
+                <CheckCircle className="h-4 w-4 text-primary" /> 
+                Checklist: "Benar-benar akan sampai ke pembeli"
+              </span>
+            </label>
+            {!deliveryChecklist && (
+              <p className="text-xs text-danger ml-8">Harus dicentang untuk menjamin barang sampai</p>
+            )}
           </div>
         </div>
 
-        {/* ---- Pre-Order H-1 ---- */}
-        <div className="rounded-xl border-2 border-primary/30 bg-primary-soft p-4">
-          <label className="flex items-start gap-3">
-            <input
-              type="checkbox"
-              checked={preOrder}
-              onChange={(e) => setPreOrder(e.target.checked)}
-              className="mt-1 h-6 w-6 accent-primary"
-            />
-            <span>
-              <span className="block text-base font-bold text-primary">🌱 Aktifkan Pre-Order</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">
-                Produk belum dipanen. Pembeli pesan dulu, Anda panen sesuai pesanan — tidak ada sayuran terbuang.
-              </span>
-            </span>
-          </label>
-          {preOrder && (
-            <div className="mt-3">
-              <label className="mb-1 block text-sm font-bold">Perkiraan Tanggal Panen</label>
-              <input
-                type="date"
-                value={harvestPlannedDate}
-                onChange={(e) => setHarvestPlannedDate(e.target.value)}
-                min={new Date(Date.now() + 86400_000).toISOString().slice(0, 10)}
-                className="h-14 w-full rounded-xl border-2 border-primary bg-background px-4 text-base outline-none"
-                required
-              />
-              <p className="mt-1 text-xs text-muted-foreground">
-                Pembeli akan tahu pesanan dikirim setelah tanggal ini.
-              </p>
-            </div>
-          )}
+        {/* ===== PRE-ORDER (Coming Soon) ===== */}
+        <div className="rounded-xl border-2 border-dashed border-muted-foreground/30 bg-muted/20 p-4 text-center opacity-70">
+          <span className="text-2xl">🚜</span>
+          <p className="text-sm font-bold text-muted-foreground">Pre-Order</p>
+          <p className="text-xs text-muted-foreground">Coming Soon — Fitur pre-order akan tersedia di versi berikutnya</p>
         </div>
 
+        {/* ===== OPTIONAL DETAILS ===== */}
         <div className="rounded-xl bg-card p-4 shadow-card">
           <h2 className="text-base font-bold">Detail Tambahan (opsional)</h2>
           <p className="mb-3 text-xs text-muted-foreground">Lengkapi agar pembeli lebih percaya</p>
@@ -248,27 +315,33 @@ function TambahProduk() {
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)" }}
       >
         <button
+          type="button"
           onClick={handleSubmit}
-          disabled={!valid}
-          className="h-14 w-full rounded-xl bg-primary text-lg font-bold text-primary-foreground disabled:opacity-50"
+          disabled={!valid || !deliveryChecklist}
+          className="h-14 w-full rounded-xl bg-primary text-lg font-bold text-primary-foreground disabled:opacity-50 flex items-center justify-center gap-2"
         >
+          <CheckCircle className="h-5 w-5" />
           Simpan Produk
         </button>
+        {!deliveryChecklist && (
+          <p className="mt-1 text-xs text-danger text-center">Centang checklist pengiriman terlebih dahulu</p>
+        )}
       </div>
     </MobileShell>
   );
 }
 
-function Field({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
+function Field({ label, value, onChange, placeholder, type = "text", icon }: { 
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; icon?: React.ReactNode;
+}) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-bold">{label}</label>
+      <label className="mb-1 block text-sm font-bold flex items-center gap-1">{icon} {label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        required
         className="h-14 w-full rounded-xl border-2 border-border bg-background px-4 text-base outline-none focus:border-primary"
       />
     </div>
