@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:firebase": "vite build --mode production",
+	"build:firebase": "vite build --mode production",
+	"pages:build": "vite build --mode production && mkdir dist\\pages && xcopy /E /I dist\\client dist\\pages\\_client",
     "preview": "vite preview",
     "deploy:firebase": "npm run build:firebase && firebase deploy --only hosting",
     "lint": "eslint .",
