@@ -1,8 +1,4 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "pages": {
-    "output": "dist/pages"
-  },
-  "vars": {},
-  "rules": []
+  "name": "panenku",
+  "pages_build_output_dir": "dist/client"
 }
